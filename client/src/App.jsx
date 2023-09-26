@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import { ExampleComponent } from './components/AudioRecorder';
 
 function App() {
   const [helloWorld, setHelloWorld] = useState(null);
@@ -17,6 +18,9 @@ function App() {
         {helloWorld &&
           <div>{helloWorld.message}</div>
         }
+      </div>
+      <div>
+        <ExampleComponent />
       </div>
     </>
   )
