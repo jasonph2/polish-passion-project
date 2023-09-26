@@ -9,7 +9,8 @@ Right now this project is being broken down into three phases (I am currently on
      of fluency in which the user responds with the Polish that they know.
 3. Expand app to be more universal in use and to not have to be utilized within an IDE using relative file paths in a local database.
 
-This order of priority is a reflection on the inspiration for this project:
+This order of priority is a reflection on the inspiration for this project
+
 I am currently working on this project to be able to improve the following skills:
 1. My Polish dialogue, as my wife's family is Polish I am unable to communicate with them and desire to be able to improve my communication ability.
 2. Full stack development using React and Flask. I have had previous experience with this stack, but hope to solidify my skills through this project.
