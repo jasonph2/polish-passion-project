@@ -1,10 +1,10 @@
 import { AudioRecorder, useAudioRecorder } from 'react-audio-voice-recorder';
+import * as React from 'react'
 
 export function ExampleComponent() {
-  const recorderControls = useAudioRecorder()
   const addAudioElement = (blob) => {
     const url = URL.createObjectURL(blob);
-    const audio = document.createElement("audio");
+    const audio = document.createElement('audio');
     audio.src = url;
     audio.controls = true;
     document.body.appendChild(audio);
@@ -12,11 +12,27 @@ export function ExampleComponent() {
 
   return (
     <div>
-      <AudioRecorder 
-        onRecordingComplete={(blob) => addAudioElement(blob)}
-        recorderControls={recorderControls}
+      <AudioRecorder
+        onRecordingComplete={addAudioElement}
+        audioTrackConstraints={{
+          noiseSuppression: true,
+          echoCancellation: true,
+          // autoGainControl,
+          // channelCount,
+          // deviceId,
+          // groupId,
+          // sampleRate,
+          // sampleSize,
+        }}
+        onNotAllowedOrFound={(err) => console.table(err)}
+        downloadOnSavePress={true}
+        downloadFileExtension="mp3"
+        mediaRecorderOptions={{
+          audioBitsPerSecond: 128000,
+        }}
+        // showVisualizer={true}
       />
-      <button onClick={recorderControls.stopRecording}>Stop recording</button>
+      <br />
     </div>
-  )
+  );
 }
