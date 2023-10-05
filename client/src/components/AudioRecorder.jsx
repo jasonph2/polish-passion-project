@@ -26,11 +26,11 @@ export function ExampleComponent() {
         }}
         onNotAllowedOrFound={(err) => console.table(err)}
         downloadOnSavePress={true}
-        downloadFileExtension="mp3"
+        downloadFileExtension="webm"
         mediaRecorderOptions={{
           audioBitsPerSecond: 128000,
         }}
-        // showVisualizer={true}
+        showVisualizer={true}
       />
       <br />
     </div>
