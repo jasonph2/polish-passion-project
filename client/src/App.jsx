@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import { ExampleComponent } from './components/AudioRecorder';
+import YourComponent from './components/reduxTest';
 
 function App() {
   const [helloWorld, setHelloWorld] = useState(null);
@@ -35,6 +36,9 @@ function App() {
       </div>
       <div>
         <ExampleComponent />
+      </div>
+      <div>
+        <YourComponent />
       </div>
     </>
   )
