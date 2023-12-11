@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import { AudioElement } from './components/AudioRecorder';
-import YourComponent from './components/reduxTest';
+// import YourComponent from './components/reduxTest';
 import AudioTable from './components/AudioEntryTable';
 
 function App() {
@@ -38,9 +38,9 @@ function App() {
       <div>
         <AudioElement />
       </div>
-      <div>
+      {/* <div>
         <YourComponent />
-      </div>
+      </div> */}
       <div>
         <AudioTable />
       </div>

@@ -1,29 +1,35 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { setAudioFiles } from '../redux/reducer';
 
 const AudioTable = () => {
-    const [audioFiles, setAudioFiles] = useState([]);
+    const dispatch = useDispatch();
+    const audioFiles = useSelector((state) => state.some.audioFiles);
+    const change = useSelector((state) => state.some.toChange);
   
     useEffect(() => {
-      const fetchAudioList = async () => {
-        try {
-          const response = await fetch('http://localhost:5000/audio-list');
-          const data = await response.json();
-          setAudioFiles(data);
-        } catch (error) {
-          console.error('Error fetching audio list:', error);
-        }
-      };
-  
-      fetchAudioList();
-    }, []);
+        console.log("HERE");
+        const fetchAudioList = async () => {
+            try {
+            const response = await fetch('http://localhost:5000/audio-list');
+            const data = await response.json();
+            console.log(data);
+            dispatch(setAudioFiles(data));
+            } catch (error) {
+            console.error('Error fetching audio list:', error);
+            }
+        };
     
+        fetchAudioList();
+    }, [change]);
+
     const handleDelete = () => {
         console.log("time to delete");
     }
   
     return (
       <div>
-        {audioFiles.length > 0 ? (
+        {audioFiles && audioFiles.length > 0 ? (
           <table>
             <thead>
               <tr>

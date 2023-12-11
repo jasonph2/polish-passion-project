@@ -1,21 +1,15 @@
 // someReducer.js
 const initialState = {
-    dictionary: {
-      key1: 'value1',
-      key2: 'value2',
-    },
+    toChange: 1,
     audioFiles: [],
   };
   
   const reducer = (state = initialState, action) => {
     switch (action.type) {
-      case 'SET_DICT':
+      case 'SET_TO_CHANGE':
         return {
           ...state,
-          dictionary: {
-            ...state.dictionary,
-            ...action.payload,
-          },
+          toChange: action.payload,
         };
       case 'SET_AUDIO_FILES':
         return {
@@ -27,17 +21,18 @@ const initialState = {
     }
   };
   
-  export const setDict = (payload) => {
+  export const setToChange = (payload) => {
     return {
-      type: 'SET_DICT',
+      type: 'SET_TO_CHANGE',
       payload,
     };
   };
   
-  export const setAudioFiles = (payload) => ({
-    type: 'SET_AUDIO_FILES',
-    payload,
-  });
-  
+  export const setAudioFiles = (payload) => {
+    return {
+      type: 'SET_AUDIO_FILES',
+      payload,
+    };
+  }
   export default reducer;
   
