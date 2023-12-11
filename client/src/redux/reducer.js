@@ -4,6 +4,7 @@ const initialState = {
       key1: 'value1',
       key2: 'value2',
     },
+    audioFiles: [],
   };
   
   const reducer = (state = initialState, action) => {
@@ -16,6 +17,11 @@ const initialState = {
             ...action.payload,
           },
         };
+      case 'SET_AUDIO_FILES':
+        return {
+          ...state,
+          audioFiles: action.payload,
+        };
       default:
         return state;
     }
@@ -27,6 +33,11 @@ const initialState = {
       payload,
     };
   };
+  
+  export const setAudioFiles = (payload) => ({
+    type: 'SET_AUDIO_FILES',
+    payload,
+  });
   
   export default reducer;
   

@@ -16,6 +16,10 @@ const AudioTable = () => {
   
       fetchAudioList();
     }, []);
+    
+    const handleDelete = () => {
+        console.log("time to delete");
+    }
   
     return (
       <div>
@@ -25,6 +29,7 @@ const AudioTable = () => {
               <tr>
                 <th>File Name</th>
                 <th>Play</th>
+                <th>Delete</th>
               </tr>
             </thead>
             <tbody>
@@ -36,6 +41,9 @@ const AudioTable = () => {
                       <source src={`http://localhost:5000/audio/${filename}`} type="audio/webm" />
                       Your browser does not support the audio element.
                     </audio>
+                  </td>
+                  <td>
+                    <button onClick={handleDelete} />
                   </td>
                 </tr>
               ))}
