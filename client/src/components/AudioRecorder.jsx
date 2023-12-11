@@ -8,6 +8,7 @@ export function AudioElement() {
   const dispatch = useDispatch();
   const change = useSelector((state) => state.some.toChange);
   const [showChoice, setShowChoice] = useState(false);
+  const [name, setName] = useState("");
 
   const addAudioElement = (blob) => {
     const url = URL.createObjectURL(blob);
@@ -18,7 +19,7 @@ export function AudioElement() {
     // Create a download link
     const downloadLink = document.createElement('a');
     downloadLink.href = url;
-    downloadLink.download = 'audio_file.webm';
+    downloadLink.download = name + ".webm";
 
     // Append the audio element and download link to the document
     document.body.appendChild(audio);
@@ -45,6 +46,10 @@ export function AudioElement() {
     setShowChoice(false);
   }
 
+  const handleNameChange = (event) => {
+    setName(event.target.value);
+  }
+
   return (
     <div>
       <AudioRecorder
@@ -68,6 +73,13 @@ export function AudioElement() {
         showVisualizer={true}
       />
       <br />
+      <input 
+        type='text'
+        id='textInput'
+        value={name}
+        onChange={handleNameChange}
+        placeholder='Word to Learn'
+      />
       {showChoice ? (
         <div>
           did you download the file?
