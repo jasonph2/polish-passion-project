@@ -1,7 +1,7 @@
 import { AudioRecorder, useAudioRecorder } from 'react-audio-voice-recorder';
 import * as React from 'react'
 
-export function ExampleComponent() {
+export function AudioElement() {
   const addAudioElement = (blob) => {
     const url = URL.createObjectURL(blob);
     const audio = document.createElement('audio');
@@ -25,7 +25,7 @@ export function ExampleComponent() {
           // sampleSize,
         }}
         onNotAllowedOrFound={(err) => console.table(err)}
-        downloadOnSavePress={true}
+        downloadOnSavePress={false}
         downloadFileExtension="webm"
         mediaRecorderOptions={{
           audioBitsPerSecond: 128000,
