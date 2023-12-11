@@ -25,7 +25,7 @@ export function AudioElement() {
           // sampleSize,
         }}
         onNotAllowedOrFound={(err) => console.table(err)}
-        downloadOnSavePress={false}
+        downloadOnSavePress={true}
         downloadFileExtension="webm"
         mediaRecorderOptions={{
           audioBitsPerSecond: 128000,

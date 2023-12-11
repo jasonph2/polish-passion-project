@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import './App.css'
-import { AudioElement, ExampleComponent } from './components/AudioRecorder';
+import { AudioElement } from './components/AudioRecorder';
 import YourComponent from './components/reduxTest';
+import AudioTable from './components/AudioEntryTable';
 
 function App() {
   const [helloWorld, setHelloWorld] = useState(null);
@@ -39,6 +40,9 @@ function App() {
       </div>
       <div>
         <YourComponent />
+      </div>
+      <div>
+        <AudioTable />
       </div>
     </>
   )
