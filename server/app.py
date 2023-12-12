@@ -70,7 +70,6 @@ def add_entry():
             sql = "INSERT INTO db.words (word, path, rec_length, familiarity) VALUES (%s, %s, %s, %s)"
             cur.execute(sql, (word, path, rec_length, familiarity))
         conn.commit()
-        print("here1")
         return "Data should be inserted successfully at this point"
     except Exception as e:
         print(f"Error: {str(e)}")
