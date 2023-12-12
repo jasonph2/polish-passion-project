@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setAudioFiles } from '../redux/reducer';
+import { setAudioFiles, setToChange } from '../redux/reducer';
+import { removeEntry } from '../api';
 
 const AudioTable = () => {
     const dispatch = useDispatch();
@@ -11,20 +12,25 @@ const AudioTable = () => {
         console.log("HERE");
         const fetchAudioList = async () => {
             try {
-            const response = await fetch('http://localhost:5000/audio-list');
-            const data = await response.json();
-            console.log(data);
-            dispatch(setAudioFiles(data));
+              const response = await fetch('http://localhost:5000/audio-list');
+              const data = await response.json();
+              console.log(data);
+              dispatch(setAudioFiles(data));
             } catch (error) {
-            console.error('Error fetching audio list:', error);
+              console.error('Error fetching audio list:', error);
             }
         };
     
         fetchAudioList();
     }, [change]);
 
-    const handleDelete = () => {
-        console.log("time to delete");
+    const handleDelete = (path) => {
+      const fetching = async () => {
+        const data = await removeEntry({path: path});
+        console.log(data);
+      }
+      fetching();
+      dispatch(setToChange(change + 1));
     }
   
     return (
@@ -34,22 +40,28 @@ const AudioTable = () => {
             <thead>
               <tr>
                 <th>File Name</th>
+                <th>File Path</th>
                 <th>Play</th>
+                <th>Length</th>
+                <th>Familiarity</th>
                 <th>Delete</th>
               </tr>
             </thead>
             <tbody>
-              {audioFiles.map((filename, index) => (
+              {audioFiles.map((file, index) => (
                 <tr key={index}>
-                  <td>{filename}</td>
+                  <td>{file.word}</td>
+                  <td>{file.path}</td>
                   <td>
                     <audio controls>
-                      <source src={`http://localhost:5000/audio/${filename}`} type="audio/webm" />
+                      <source src={`http://localhost:5000/audio/${file.path}`} type="audio/webm" />
                       Your browser does not support the audio element.
                     </audio>
                   </td>
+                  <td>{file.rec_length}</td>
+                  <td>{file.familiarity}</td>
                   <td>
-                    <button onClick={handleDelete} />
+                    <button onClick={() => handleDelete(file.path)} />
                   </td>
                 </tr>
               ))}

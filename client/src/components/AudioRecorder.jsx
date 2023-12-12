@@ -3,12 +3,15 @@ import * as React from 'react'
 import { setToChange } from '../redux/reducer';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react'
+import { addEntry } from '../api';
+import { generateRandomString } from '../utilities/randomstring';
 
 export function AudioElement() {
   const dispatch = useDispatch();
   const change = useSelector((state) => state.some.toChange);
   const [showChoice, setShowChoice] = useState(false);
   const [name, setName] = useState("");
+  const [fileName, setFileName] = useState("");
 
   const addAudioElement = (blob) => {
     const url = URL.createObjectURL(blob);
@@ -19,7 +22,9 @@ export function AudioElement() {
     // Create a download link
     const downloadLink = document.createElement('a');
     downloadLink.href = url;
-    downloadLink.download = name + ".webm";
+    const tempStr = name + "-" + generateRandomString(15) + ".webm"
+    setFileName(tempStr);
+    downloadLink.download = tempStr;
 
     // Append the audio element and download link to the document
     document.body.appendChild(audio);
@@ -37,15 +42,12 @@ export function AudioElement() {
     setShowChoice(true);
   };
 
-  const handleUpdate = () => {
-    fetch("http://127.0.0.1:5000/addentry", {
-      method: "POST",
-      mode:"cors",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-      .then((response) => response.json())
+  const handleUpdate = (name) => {
+    const fetching = async () => {
+      const data = await addEntry({name: name, file_name: fileName, familiarity: 1});
+      console.log(data);
+    }
+    fetching();
     dispatch(setToChange(change + 1));
     setShowChoice(false);
   }
@@ -91,7 +93,7 @@ export function AudioElement() {
       {showChoice ? (
         <div>
           did you download the file?
-          <button onClick={handleUpdate}>YES</button>
+          <button onClick={() => handleUpdate(name)}>YES</button>
           <button onClick={handleNo}>NO</button>
         </div>
       ) : (

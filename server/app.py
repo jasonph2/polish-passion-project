@@ -40,42 +40,45 @@ def serve_audio(filename):
 
 @app.route('/audio-list')
 def get_audio_list():
-    audio_files = [f for f in os.listdir(AUDIO_FILE_PATH) if f.endswith('.webm')]
-    return jsonify(audio_files)
-
-# @app.route('/addentry', methods=["POST"])
-# def add_entry(file_name):
-#     webm_file = f"{AUDIO_FILE_PATH}{file_name}.webm"
-#     mp3_file = f"{AUDIO_FILE_PATH}{file_name}.mp3"
-#     try:
-#         old_file = VideoFileClip(webm_file)
-#         audio_clip = old_file.audio
-#         audio_clip.write_audiofile(mp3_file)
-
-#         audio_clip.close()
-#         old_file.close()
-#         return jsonify({"status": "Success"})
-#     except Exception as e:
-#         return jsonify({"status": f"failure {Exception}"})
+    try:
+        with conn.cursor() as cur:
+            sql = "SELECT * FROM db.words"
+            cur.execute(sql)
+            audio_files = cur.fetchall()
+        conn.commit()
+        return jsonify(audio_files)
+    except Exception as e:
+        return jsonify([{"message": f"Error: {str(e)}"}])
 
 @app.route('/addentry', methods=["POST"])
 def add_entry():
-    word = "temp"
-    path = "/this/is/path"
-    rec_length = 10.4
-    familiarity = 1
+
+    data = request.get_json()
+    print(data)
 
     try:
         with conn.cursor() as cur:
             sql = "INSERT INTO db.words (word, path, rec_length, familiarity) VALUES (%s, %s, %s, %s)"
-            cur.execute(sql, (word, path, rec_length, familiarity))
+            cur.execute(sql, (data["word"], data["path"], 10.4, data["familiarity"]))
         conn.commit()
-        return "Data should be inserted successfully at this point"
+        return jsonify({"message": "Data should be inserted successfully at this point"})
     except Exception as e:
-        print(f"Error: {str(e)}")
-        return f"Error: {str(e)}"
-    finally:
-        conn.close()
+        return jsonify({"message": f"Error: {str(e)}"})
+
+@app.route('/removeentry', methods=["POST"])
+def remove_entry():
+
+    data = request.get_json()
+    print(data)
+
+    try:
+        with conn.cursor() as cur:
+            sql = "DELETE FROM db.words WHERE path = %s"
+            cur.execute(sql, (data["path"]))
+        conn.commit()
+        return jsonify({"message": "Data should be deleted successfully at this point"})
+    except Exception as e:
+        return jsonify({"message": f"Error: {str(e)}"})
 
 
 if __name__ == '__main__':

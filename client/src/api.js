@@ -17,3 +17,47 @@ export async function helloWorld() {
         throw new Error(`Error in fetchData: ${error.message}`);
     }
 }
+
+export async function addEntry({name, file_name, familiarity}) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/addentry`, {
+            method: "POST",
+            mode:"cors",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                word: name,
+                path: file_name,
+                familiarity: familiarity
+            })
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}
+
+export async function removeEntry({path}) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/removeentry`, {
+            method: "POST",
+            mode:"cors",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                path: path,
+            })
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}

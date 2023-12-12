@@ -1,22 +1,19 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import { AudioElement } from './components/AudioRecorder';
+import { helloWorld } from './api';
 // import YourComponent from './components/reduxTest';
 import AudioTable from './components/AudioEntryTable';
 
 function App() {
-  const [helloWorld, setHelloWorld] = useState(null);
+  const [a, setA] = useState(null);
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/test", {
-      method: "GET",
-      mode:"cors",
-      headers: {
-        "Content-Type": "application/json"
-      }
-    })
-      .then((response) => response.json())
-      .then((data) => setHelloWorld(data))
+    const fetching = async () => {
+      const data = await helloWorld();
+      setA(data);
+    }
+    fetching();
   }, []);
 
   useEffect(() => {
@@ -31,8 +28,8 @@ function App() {
     <>
       <div className='App'>
         <h1>App to Practice Polish</h1>
-        {helloWorld &&
-          <div>{helloWorld.message}</div>
+        {a &&
+          <div>{a.message}</div>
         }
       </div>
       <div>
