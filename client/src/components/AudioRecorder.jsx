@@ -38,6 +38,14 @@ export function AudioElement() {
   };
 
   const handleUpdate = () => {
+    fetch("http://127.0.0.1:5000/addentry", {
+      method: "POST",
+      mode:"cors",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    })
+      .then((response) => response.json())
     dispatch(setToChange(change + 1));
     setShowChoice(false);
   }
