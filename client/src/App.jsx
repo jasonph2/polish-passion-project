@@ -35,9 +35,6 @@ function App() {
       <div>
         <AudioElement />
       </div>
-      {/* <div>
-        <YourComponent />
-      </div> */}
       <div>
         <AudioTable />
       </div>

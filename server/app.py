@@ -1,9 +1,9 @@
 from flask import Flask, jsonify, send_from_directory, request, render_template
 from flask_cors import CORS
-from moviepy.editor import VideoFileClip
 import pymysql
 from config import AUDIO_FILE_PATH
 import os
+from audiohelper import convert_webm_to_mp3, change_file_extension, duration_command
 
 app = Flask(__name__)
 CORS(app)
@@ -56,10 +56,15 @@ def add_entry():
     data = request.get_json()
     print(data)
 
+    mp3_file = change_file_extension(data["path"], 'mp3')
+    convert_webm_to_mp3(f"../audio/{data['path']}", f"../audio/{mp3_file}")
+    duration = duration_command(f"../audio/{mp3_file}")
+    os.remove(f"../audio/{data['path']}")
+
     try:
         with conn.cursor() as cur:
             sql = "INSERT INTO db.words (word, path, rec_length, familiarity) VALUES (%s, %s, %s, %s)"
-            cur.execute(sql, (data["word"], data["path"], 10.4, data["familiarity"]))
+            cur.execute(sql, (data["word"], mp3_file, duration, data["familiarity"]))
         conn.commit()
         return jsonify({"message": "Data should be inserted successfully at this point"})
     except Exception as e:
@@ -70,7 +75,7 @@ def remove_entry():
 
     data = request.get_json()
     print(data)
-
+    
     try:
         with conn.cursor() as cur:
             sql = "DELETE FROM db.words WHERE path = %s"
