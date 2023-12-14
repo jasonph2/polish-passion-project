@@ -76,6 +76,7 @@ def remove_entry():
             sql = "DELETE FROM db.words WHERE path = %s"
             cur.execute(sql, (data["path"]))
         conn.commit()
+        os.remove(f"../audio/{data['path']}")
         return jsonify({"message": "Data should be deleted successfully at this point"})
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"})

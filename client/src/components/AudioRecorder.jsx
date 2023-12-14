@@ -46,9 +46,9 @@ export function AudioElement() {
     const fetching = async () => {
       const data = await addEntry({name: name, file_name: fileName, familiarity: 1});
       console.log(data);
+      dispatch(setToChange(change + 1));
     }
     fetching();
-    dispatch(setToChange(change + 1));
     setShowChoice(false);
   }
 

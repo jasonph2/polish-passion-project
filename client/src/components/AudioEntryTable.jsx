@@ -28,9 +28,9 @@ const AudioTable = () => {
       const fetching = async () => {
         const data = await removeEntry({path: path});
         console.log(data);
+        dispatch(setToChange(change + 1));
       }
       fetching();
-      dispatch(setToChange(change + 1));
     }
   
     return (
@@ -61,7 +61,7 @@ const AudioTable = () => {
                   <td>{file.rec_length}</td>
                   <td>{file.familiarity}</td>
                   <td>
-                    <button onClick={() => handleDelete(file.path)} />
+                    <button onClick={() => handleDelete(file.path)}>delete</button>
                   </td>
                 </tr>
               ))}
