@@ -62,6 +62,7 @@ export function AudioElement() {
     }
     fetching();
     setShowChoice(false);
+    setName("");
   }
 
   const handleNo = () => {
