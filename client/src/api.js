@@ -42,7 +42,7 @@ export async function addEntry({name, polish_file_name, familiarity, english_fil
     }
 }
 
-export async function removeEntry({path}) {
+export async function removeEntry({polish_path, english_path}) {
     try {
         const response = await fetch(`${API_BASE_URL}/removeentry`, {
             method: "POST",
@@ -51,7 +51,8 @@ export async function removeEntry({path}) {
               "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                path: path,
+                polish_path: polish_path,
+                english_path: english_path
             })
         });
         if (!response.ok) {

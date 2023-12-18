@@ -1,13 +1,4 @@
 import subprocess
-import os
-
-def change_file_extension(file_path, new_extension):
-    directory, filename_with_extension = os.path.split(file_path)
-    filename, _ = os.path.splitext(filename_with_extension)
-
-    new_file_path = os.path.join(directory, f"{filename}.{new_extension}")
-
-    return new_file_path
 
 def convert_webm_to_mp3(input_file, output_file):
     ffmeg_path = r'C:\Users\Jason\Polish-Passion-Project\ffmpeg-2023-12-14-git-5256b2fbe6-essentials_build\bin\ffmpeg.exe'

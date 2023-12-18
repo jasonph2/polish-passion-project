@@ -13,6 +13,7 @@ export function AudioElement() {
   const [name, setName] = useState("");
   const [polishFileName, setPolishFileName] = useState("");
   const [englishFileName, setEnglishFileName] = useState("");
+  const [randomString, setRandomString] = useState("");
 
 
   const addAudioElement = (blob, arg) => {

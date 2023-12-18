@@ -24,9 +24,9 @@ const AudioTable = () => {
         fetchAudioList();
     }, [change]);
 
-    const handleDelete = (path) => {
+    const handleDelete = (polish_path, english_path) => {
       const fetching = async () => {
-        const data = await removeEntry({path: path});
+        const data = await removeEntry({polish_path: polish_path, english_path: english_path});
         console.log(data);
         dispatch(setToChange(change + 1));
       }
@@ -39,7 +39,7 @@ const AudioTable = () => {
           <table>
             <thead>
               <tr>
-                <th>File Name</th>
+                <th>Word</th>
                 <th>Play</th>
                 <th>Length</th>
                 <th>Familiarity</th>
@@ -56,10 +56,10 @@ const AudioTable = () => {
                       Your browser does not support the audio element.
                     </audio>
                   </td>
-                  <td>{file.rec_length}</td>
+                  <td>{file.polish_length}</td>
                   <td>{file.familiarity}</td>
                   <td>
-                    <button onClick={() => handleDelete(file.path)}>delete</button>
+                    <button onClick={() => handleDelete(file.polish_path, file.english_path)}>delete</button>
                   </td>
                 </tr>
               ))}

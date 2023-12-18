@@ -3,7 +3,8 @@ from flask_cors import CORS
 import pymysql
 from config import AUDIO_FILE_PATH
 import os
-from audiohelper import convert_webm_to_mp3, change_file_extension, duration_command
+from audiohelper import convert_webm_to_mp3, duration_command
+from utils import change_file_extension
 
 app = Flask(__name__)
 CORS(app)
@@ -82,11 +83,15 @@ def remove_entry():
     print(data)
     
     try:
+        print("HERE1")
         with conn.cursor() as cur:
-            sql = "DELETE FROM db.words WHERE path = %s"
+            sql = "DELETE FROM db.words WHERE polish_path = %s"
             cur.execute(sql, (data["polish_path"]))
+            print("HERE2")
         conn.commit()
+        print("HERE3")
         os.remove(f"../audio/{data['polish_path']}")
+        os.remove(f"../audio/{data['english_path']}")
         return jsonify({"message": "Data should be deleted successfully at this point"})
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"})
