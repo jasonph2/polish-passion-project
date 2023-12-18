@@ -25,13 +25,13 @@ export function AudioElement() {
     const downloadLink = document.createElement('a');
     downloadLink.href = url;
     if (arg != "") {
-      adjusted = name.replace(/ /g, "_");
+      const adjusted = name.replace(/ /g, "_");
       const tempStr = adjusted + "-" + arg + "-" + generateRandomString(15) + ".webm"
       setEnglishFileName(tempStr);
       downloadLink.download = tempStr;
     } else {
-      adjusted = name.replace(/ /g, "_");
-      const tempStr = name + "-" + generateRandomString(15) + ".webm"
+      const adjusted = name.replace(/ /g, "_");
+      const tempStr = adjusted + "-" + generateRandomString(15) + ".webm"
       setPolishFileName(tempStr);
       downloadLink.download = tempStr;
     }
@@ -99,7 +99,7 @@ export function AudioElement() {
       <div>
         English Recorder
         <AudioRecorder
-          onRecordingComplete={(blob) => addAudioElement("English")}
+          onRecordingComplete={(blob) => addAudioElement(blob, "English")}
           audioTrackConstraints={{
             noiseSuppression: true,
             echoCancellation: true,

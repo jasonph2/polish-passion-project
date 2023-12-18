@@ -40,7 +40,6 @@ const AudioTable = () => {
             <thead>
               <tr>
                 <th>File Name</th>
-                <th>File Path</th>
                 <th>Play</th>
                 <th>Length</th>
                 <th>Familiarity</th>
@@ -51,10 +50,9 @@ const AudioTable = () => {
               {audioFiles.map((file, index) => (
                 <tr key={index}>
                   <td>{file.word}</td>
-                  <td>{file.path}</td>
                   <td>
                     <audio controls>
-                      <source src={`http://localhost:5000/audio/${file.path}`} type="audio/webm" />
+                      <source src={`http://localhost:5000/audio/${file.polish_path}`} type="audio/webm" />
                       Your browser does not support the audio element.
                     </audio>
                   </td>
