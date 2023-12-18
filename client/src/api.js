@@ -18,7 +18,7 @@ export async function helloWorld() {
     }
 }
 
-export async function addEntry({name, file_name, familiarity}) {
+export async function addEntry({name, polish_file_name, familiarity, english_file_name}) {
     try {
         const response = await fetch(`${API_BASE_URL}/addentry`, {
             method: "POST",
@@ -28,8 +28,9 @@ export async function addEntry({name, file_name, familiarity}) {
             },
             body: JSON.stringify({
                 word: name,
-                path: file_name,
-                familiarity: familiarity
+                polish_path: polish_file_name,
+                familiarity: familiarity,
+                english_path: english_file_name
             })
         });
         if (!response.ok) {

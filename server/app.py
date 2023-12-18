@@ -56,15 +56,20 @@ def add_entry():
     data = request.get_json()
     print(data)
 
-    mp3_file = change_file_extension(data["path"], 'mp3')
-    convert_webm_to_mp3(f"../audio/{data['path']}", f"../audio/{mp3_file}")
-    duration = duration_command(f"../audio/{mp3_file}")
-    os.remove(f"../audio/{data['path']}")
+    mp3_polish_file = change_file_extension(data["polish_path"], 'mp3')
+    convert_webm_to_mp3(f"../audio/{data['polish_path']}", f"../audio/{mp3_polish_file}")
+    polish_duration = duration_command(f"../audio/{mp3_polish_file}")
+    os.remove(f"../audio/{data['polish_path']}")
+
+    mp3_english_file = change_file_extension(data["english_path"], 'mp3')
+    convert_webm_to_mp3(f"../audio/{data['english_path']}", f"../audio/{mp3_english_file}")
+    english_duration = duration_command(f"../audio/{mp3_english_file}")
+    os.remove(f"../audio/{data['english_path']}")
 
     try:
         with conn.cursor() as cur:
-            sql = "INSERT INTO db.words (word, path, rec_length, familiarity) VALUES (%s, %s, %s, %s)"
-            cur.execute(sql, (data["word"], mp3_file, duration, data["familiarity"]))
+            sql = "INSERT INTO db.words (word, polish_path, polish_length, familiarity, english_path, english_length) VALUES (%s, %s, %s, %s, %s, %s)"
+            cur.execute(sql, (data["word"], mp3_polish_file, polish_duration, data["familiarity"], mp3_english_file, english_duration))
         conn.commit()
         return jsonify({"message": "Data should be inserted successfully at this point"})
     except Exception as e:
@@ -79,9 +84,9 @@ def remove_entry():
     try:
         with conn.cursor() as cur:
             sql = "DELETE FROM db.words WHERE path = %s"
-            cur.execute(sql, (data["path"]))
+            cur.execute(sql, (data["polish_path"]))
         conn.commit()
-        os.remove(f"../audio/{data['path']}")
+        os.remove(f"../audio/{data['polish_path']}")
         return jsonify({"message": "Data should be deleted successfully at this point"})
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"})
