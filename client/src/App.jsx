@@ -28,9 +28,9 @@ function App() {
     <>
       <div className='App'>
         <h1>App to Practice Polish</h1>
-        {a &&
+        {/* {a &&
           <div>{a.message}</div>
-        }
+        } */}
       </div>
       <div>
         <AudioElement />

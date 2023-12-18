@@ -83,13 +83,10 @@ def remove_entry():
     print(data)
     
     try:
-        print("HERE1")
         with conn.cursor() as cur:
             sql = "DELETE FROM db.words WHERE polish_path = %s"
             cur.execute(sql, (data["polish_path"]))
-            print("HERE2")
         conn.commit()
-        print("HERE3")
         os.remove(f"../audio/{data['polish_path']}")
         os.remove(f"../audio/{data['english_path']}")
         return jsonify({"message": "Data should be deleted successfully at this point"})

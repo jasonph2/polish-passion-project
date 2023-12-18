@@ -9,7 +9,6 @@ const AudioTable = () => {
     const change = useSelector((state) => state.some.toChange);
   
     useEffect(() => {
-        console.log("HERE");
         const fetchAudioList = async () => {
             try {
               const response = await fetch('http://localhost:5000/audio-list');
