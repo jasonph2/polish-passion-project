@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAudioFiles, setToChange } from '../redux/reducer';
-import { removeEntry } from '../api';
+import { removeEntry, updateFamLevel } from '../api';
 
 const AudioTable = () => {
     const dispatch = useDispatch();
@@ -31,9 +31,25 @@ const AudioTable = () => {
       }
       fetching();
     }
+
+    const handleFamChange = (event, id) => {
+      const fetching = async () => {
+        const data = await updateFamLevel({id: id, familiarity_level: event.target.value});
+        console.log(data);
+        dispatch(setToChange(change + 1));
+      }
+      fetching();
+    }
   
     return (
       <div>
+        <h3>List of Saved Files</h3>
+        <div>Familiarty levels</div>
+        <div> 1- never seen this word/phrase before</div>
+        <div> 2- I recognize this word/phrase, but do not know it</div>
+        <div> 3- I am in the process of learning this word/phrase</div>
+        <div> 4- I can translate this word/phrase both ways relatively consistently</div>
+        <div> 5- I can apply this word/phrase to a sentence in conversation</div>
         {audioFiles && audioFiles.length > 0 ? (
           <table>
             <thead>
@@ -56,7 +72,16 @@ const AudioTable = () => {
                     </audio>
                   </td>
                   <td>{file.polish_length}</td>
-                  <td>{file.familiarity}</td>
+                  <>
+                    <select id="dropdown" value={file.familiarity} onChange={(event) => handleFamChange(event, file.id)}>
+                        <option value="">-- Choose an option --</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                    </select>
+                  </>
                   <td>
                     <button onClick={() => handleDelete(file.polish_path, file.english_path)}>delete</button>
                   </td>

@@ -56,7 +56,7 @@ def random_path_gen(audio_files, data):
         total_time += word["english_length"]
         total_time += Decimal(str(gap_funcs[data['speed']](word['polish_length'])))
         total_time += word["polish_length"]
-        total_time += data["gap"]
+        total_time += Decimal(data["gap"])
 
         index_of_random_dict = audio_files.index(word)
         audio_files.pop(index_of_random_dict)

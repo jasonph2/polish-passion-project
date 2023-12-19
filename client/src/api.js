@@ -88,3 +88,25 @@ export async function generatePodcast({length, familiarity_level, speed, gap, em
         throw new Error(`Error in fetchData: ${error.message}`);
     }
 }
+
+export async function updateFamLevel({id, familiarity_level}) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/updatefamlevel`, {
+            method: "POST",
+            mode:"cors",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id: id,
+                familiarity: familiarity_level,
+            })
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}

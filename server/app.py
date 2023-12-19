@@ -106,6 +106,20 @@ def generate_podcast():
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"})
 
+@app.route('/updatefamlevel', methods=["POST"])
+def update_fam_level():
 
+    data = request.get_json()
+    print(data)
+
+    try:
+        with conn.cursor() as cursor:
+            update_query = f"UPDATE db.words SET familiarity = %s WHERE id = %s"
+            cursor.execute(update_query, (data["familiarity"], data["id"]))
+            conn.commit()
+        return jsonify({"message": "Value is updated"})
+    except Exception as e:
+        return jsonify({"message": f"Error: {str(e)}"})
+    
 if __name__ == '__main__':
     app.run()
