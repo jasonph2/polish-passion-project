@@ -64,7 +64,7 @@ export async function removeEntry({polish_path, english_path}) {
     }
 }
 
-export async function generatePodcast({length, familiarity_level, speed}) {
+export async function generatePodcast({length, familiarity_level, speed, gap, email}) {
     try {
         const response = await fetch(`${API_BASE_URL}/generatepodcast`, {
             method: "POST",
@@ -75,7 +75,9 @@ export async function generatePodcast({length, familiarity_level, speed}) {
             body: JSON.stringify({
                 length: length,
                 familiarity_level: familiarity_level,
-                speed: speed
+                speed: speed,
+                gap: gap,
+                email: email
             })
         });
         if (!response.ok) {

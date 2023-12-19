@@ -11,8 +11,7 @@ def generate_pod(conn, data):
         if (data["length"] == ""):
             raise RuntimeError("pod unable to be generated")
         
-        #switch to accept argument from front end later
-        create_silent_audio(f"{AUDIO_FILE_PATH}set-silence.mp3", 2)
+        create_silent_audio(f"{AUDIO_FILE_PATH}set-silence.mp3", data["gap"])
 
         audio_files = []
         with conn.cursor() as cur:
@@ -24,7 +23,7 @@ def generate_pod(conn, data):
 
         combine_audio_files(f"{AUDIO_FILE_PATH}testcombination.mp3", paths[0])
 
-        send_email("your email here", f"{AUDIO_FILE_PATH}testcombination.mp3")
+        send_email(data["email"], f"{AUDIO_FILE_PATH}testcombination.mp3")
         
         os.remove(f"{AUDIO_FILE_PATH}set-silence.mp3")
         for path in paths[1]:
@@ -57,8 +56,7 @@ def random_path_gen(audio_files, data):
         total_time += word["english_length"]
         total_time += Decimal(str(gap_funcs[data['speed']](word['polish_length'])))
         total_time += word["polish_length"]
-        #change to accept argument from front end
-        total_time += 2
+        total_time += data["gap"]
 
         index_of_random_dict = audio_files.index(word)
         audio_files.pop(index_of_random_dict)
