@@ -4,6 +4,7 @@ import os
 import pickle
 import random
 from decimal import Decimal
+from utils import send_email
 
 def generate_pod(conn, data):
     try:
@@ -12,7 +13,7 @@ def generate_pod(conn, data):
         
         #switch to accept argument from front end later
         create_silent_audio(f"{AUDIO_FILE_PATH}set-silence.mp3", 2)
-        
+
         audio_files = []
         with conn.cursor() as cur:
             sql = "SELECT * FROM db.words"
@@ -22,6 +23,8 @@ def generate_pod(conn, data):
         paths = random_path_gen(audio_files, data)
 
         combine_audio_files(f"{AUDIO_FILE_PATH}testcombination.mp3", paths[0])
+
+        send_email("your email here", f"{AUDIO_FILE_PATH}testcombination.mp3")
         
         os.remove(f"{AUDIO_FILE_PATH}set-silence.mp3")
         for path in paths[1]:
