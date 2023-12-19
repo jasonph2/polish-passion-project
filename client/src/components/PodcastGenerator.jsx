@@ -7,7 +7,6 @@ export function PodcastGenerator() {
     const [speed, setSpeed] = useState("");
     const [gap, setGap] = useState("");
     const [email, setEmail] = useState("");
-    const [selectedOption, setSelectedOption] = useState('');
 
     const handleLengthChange = (event) => {
         setLength(event.target.value);
@@ -48,7 +47,7 @@ export function PodcastGenerator() {
                         <option value="">-- Choose an option --</option>
                         <option value="unfamiliar">Unfamiliar</option>
                         <option value="random">Completely Random</option>
-                        <option value="familiar">Normal</option>
+                        <option value="familiar">Familiar</option>
                     </select>
                 </>
                 <>

@@ -6,6 +6,9 @@ import random
 from decimal import Decimal
 from utils import send_email
 
+familiar_bias_probs = {1: 1, 2: 2, 3: 3, 4: 7, 5: 17}
+unfamiliar_bias_probs = {1: 17, 2: 7, 3: 3, 4: 2, 5: 1}
+
 def generate_pod(conn, data):
     try:
         if (data["length"] == ""):
@@ -19,7 +22,10 @@ def generate_pod(conn, data):
             cur.execute(sql)
             audio_files = cur.fetchall()
 
-        paths = random_path_gen(audio_files, data)
+        if data["familiarity_level"] == "random":
+            paths = random_path_gen(audio_files, data)
+        else:
+            paths = bias_gen(audio_files, data, data["familiarity_level"])
 
         combine_audio_files(f"{AUDIO_FILE_PATH}testcombination.mp3", paths[0])
 
@@ -60,6 +66,53 @@ def random_path_gen(audio_files, data):
 
         index_of_random_dict = audio_files.index(word)
         audio_files.pop(index_of_random_dict)
+
+    print(f"Final file length: {total_time}")
+    return (paths, silence_paths)
+
+def bias_gen(audio_files, data, bias):
+    with open('time_funcs.pkl', 'rb') as file:
+        gap_funcs = pickle.load(file)
+
+    denom_list = []
+    for i in range(len(audio_files)):
+        idx = 0
+        if bias == "familiar":
+            while idx < familiar_bias_probs[audio_files[i]["familiarity"]]:
+                denom_list.append(i)
+                idx += 1
+        elif bias == "unfamiliar":
+            while idx < unfamiliar_bias_probs[audio_files[i]["familiarity"]]:
+                denom_list.append(i)
+                idx += 1
+
+    print(denom_list)
+    paths = []
+    silence_paths = []
+    total_time = 0
+
+    while total_time < Decimal(data["length"]) * 60:
+
+        random_int = random.randint(0, len(denom_list) - 1)
+        word_idx = denom_list[random_int]
+        word = audio_files[word_idx]
+        print(word["familiarity"])
+
+        paths.append(f"{AUDIO_FILE_PATH}{word['polish_path']}")
+
+        create_silent_audio(f"{AUDIO_FILE_PATH}{word['word']}-{data['speed']}.mp3", gap_funcs[data['speed']](word['polish_length']))
+        paths.append(f"{AUDIO_FILE_PATH}{word['word']}-{data['speed']}.mp3")
+        silence_paths.append(f"{AUDIO_FILE_PATH}{word['word']}-{data['speed']}.mp3")
+
+        paths.append(f"{AUDIO_FILE_PATH}{word['english_path']}")
+        paths.append(f"{AUDIO_FILE_PATH}set-silence.mp3")
+
+        total_time += word["english_length"]
+        total_time += Decimal(str(gap_funcs[data['speed']](word['polish_length'])))
+        total_time += word["polish_length"]
+        total_time += Decimal(data["gap"])
+
+        denom_list = [x for x in denom_list if x != word_idx]
 
     print(f"Final file length: {total_time}")
     return (paths, silence_paths)
