@@ -19,3 +19,6 @@ time_funcs = {'very_slow': very_slow, 'slow': slow, 'normal': normal, 'fast': fa
 
 with open('time_funcs.pkl', 'wb') as file:
     pickle.dump(time_funcs, file)
+
+# with open('time_funcs.pkl', 'rb') as file:
+#     loaded_cs_dict = pickle.load(file)

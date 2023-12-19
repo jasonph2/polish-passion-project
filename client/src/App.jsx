@@ -4,6 +4,7 @@ import { AudioElement } from './components/AudioRecorder';
 import { helloWorld } from './api';
 // import YourComponent from './components/reduxTest';
 import AudioTable from './components/AudioEntryTable';
+import { PodcastGenerator } from './components/PodcastGenerator';
 
 function App() {
   const [a, setA] = useState(null);
@@ -31,6 +32,9 @@ function App() {
         {/* {a &&
           <div>{a.message}</div>
         } */}
+      </div>
+      <div>
+        <PodcastGenerator />
       </div>
       <div>
         <AudioElement />

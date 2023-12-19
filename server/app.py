@@ -93,6 +93,17 @@ def remove_entry():
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"})
 
+@app.route('/generatepodcast', methods=["POST"])
+def generate_podcast():
+
+    data = request.get_json()
+    print(data)
+    
+    try:
+        return jsonify({"message": "Podcast is generated"})
+    except Exception as e:
+        return jsonify({"message": f"Error: {str(e)}"})
+
 
 if __name__ == '__main__':
     app.run()
