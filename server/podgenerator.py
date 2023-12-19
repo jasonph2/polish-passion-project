@@ -10,14 +10,14 @@ def generate_pod(conn, data):
         if (data["length"] == ""):
             raise RuntimeError("pod unable to be generated")
         
+        #switch to accept argument from front end later
+        create_silent_audio(f"{AUDIO_FILE_PATH}set-silence.mp3", 2)
+        
         audio_files = []
         with conn.cursor() as cur:
             sql = "SELECT * FROM db.words"
             cur.execute(sql)
             audio_files = cur.fetchall()
-        
-        #switch to accept argument from front end later
-        create_silent_audio(f"{AUDIO_FILE_PATH}set-silence.mp3", 2)
 
         paths = random_path_gen(audio_files, data)
 
@@ -38,7 +38,7 @@ def random_path_gen(audio_files, data):
     silence_paths = []
     total_time = 0
 
-    while total_time < int(data["length"]) * 60:
+    while total_time < Decimal(data["length"]) * 60:
 
         word = random.choice(audio_files)
 
