@@ -53,3 +53,24 @@ def combine_audio_files(output_path, input_files):
         print(f"Audio files combined successfully. Output saved to {output_path}")
     except subprocess.CalledProcessError as e:
         print(f"Error during FFmpeg: {e}")
+
+def create_silent_audio(output_path, duration):
+    ffmpeg_path = r'C:\Users\Jason\Polish-Passion-Project\ffmpeg-2023-12-14-git-5256b2fbe6-essentials_build\bin\ffmpeg.exe'
+
+    silence_command = [
+        ffmpeg_path,
+        '-f', 'lavfi',
+        '-t', str(duration),
+        '-i', 'anullsrc=channel_layout=stereo:sample_rate=44100',
+        '-c:a', 'libmp3lame',  # Use MP3 codec for the silent audio
+        '-y',  # Overwrite output file if it exists
+        output_path
+    ]
+
+
+    try:
+        subprocess.run(silence_command, check=True)
+        print(f"Silent audio generated successfully.")
+
+    except subprocess.CalledProcessError as e:
+        print(f"Error during silence generation: {e}")
