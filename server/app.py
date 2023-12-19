@@ -5,6 +5,7 @@ from config import AUDIO_FILE_PATH
 import os
 from audiohelper import convert_webm_to_mp3, duration_command
 from utils import change_file_extension
+from podgenerator import generate_pod
 
 app = Flask(__name__)
 CORS(app)
@@ -58,14 +59,14 @@ def add_entry():
     print(data)
 
     mp3_polish_file = change_file_extension(data["polish_path"], 'mp3')
-    convert_webm_to_mp3(f"../audio/{data['polish_path']}", f"../audio/{mp3_polish_file}")
-    polish_duration = duration_command(f"../audio/{mp3_polish_file}")
-    os.remove(f"../audio/{data['polish_path']}")
+    convert_webm_to_mp3(f"{AUDIO_FILE_PATH}{data['polish_path']}", f"{AUDIO_FILE_PATH}{mp3_polish_file}")
+    polish_duration = duration_command(f"{AUDIO_FILE_PATH}{mp3_polish_file}")
+    os.remove(f"{AUDIO_FILE_PATH}{data['polish_path']}")
 
     mp3_english_file = change_file_extension(data["english_path"], 'mp3')
-    convert_webm_to_mp3(f"../audio/{data['english_path']}", f"../audio/{mp3_english_file}")
-    english_duration = duration_command(f"../audio/{mp3_english_file}")
-    os.remove(f"../audio/{data['english_path']}")
+    convert_webm_to_mp3(f"{AUDIO_FILE_PATH}{data['english_path']}", f"{AUDIO_FILE_PATH}{mp3_english_file}")
+    english_duration = duration_command(f"{AUDIO_FILE_PATH}{mp3_english_file}")
+    os.remove(f"{AUDIO_FILE_PATH}{data['english_path']}")
 
     try:
         with conn.cursor() as cur:
@@ -87,8 +88,8 @@ def remove_entry():
             sql = "DELETE FROM db.words WHERE polish_path = %s"
             cur.execute(sql, (data["polish_path"]))
         conn.commit()
-        os.remove(f"../audio/{data['polish_path']}")
-        os.remove(f"../audio/{data['english_path']}")
+        os.remove(f"{AUDIO_FILE_PATH}{data['polish_path']}")
+        os.remove(f"{AUDIO_FILE_PATH}{data['english_path']}")
         return jsonify({"message": "Data should be deleted successfully at this point"})
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"})
@@ -100,6 +101,7 @@ def generate_podcast():
     print(data)
     
     try:
+        generate_pod(conn, data)
         return jsonify({"message": "Podcast is generated"})
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"})

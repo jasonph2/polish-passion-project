@@ -14,7 +14,6 @@ def convert_webm_to_mp3(input_file, output_file):
     ]
 
     try:
-        # Run the command
         subprocess.run(command, check=True)
         print(f"Conversion successful: {input_file} -> {output_file}")
     except subprocess.CalledProcessError as e:
@@ -22,7 +21,6 @@ def convert_webm_to_mp3(input_file, output_file):
 
 def duration_command(file_path):
     ffprobe_path = r'C:\Users\Jason\Polish-Passion-Project\ffmpeg-2023-12-14-git-5256b2fbe6-essentials_build\bin\ffprobe.exe'
-    # Command to get audio duration using ffprobe
     command = [
         ffprobe_path,
         '-v', 'error',
@@ -32,7 +30,6 @@ def duration_command(file_path):
     ]
 
     try:
-        # Run the command and capture the output
         result = subprocess.check_output(command, text=True)
         duration = float(result.strip())
         print(f"Duration of {file_path}: {duration} seconds")
@@ -40,3 +37,19 @@ def duration_command(file_path):
     except subprocess.CalledProcessError as e:
         print(f"Error during ffprobe: {e}")
         return None
+    
+def combine_audio_files(output_path, input_files):
+    ffmpeg_path = r'C:\Users\Jason\Polish-Passion-Project\ffmpeg-2023-12-14-git-5256b2fbe6-essentials_build\bin\ffmpeg.exe'
+
+    command = [
+        ffmpeg_path,
+        '-i', f'concat:{("|".join(input_files))}',
+        '-c', 'copy',
+        output_path
+    ]
+
+    try:
+        subprocess.run(command, check=True)
+        print(f"Audio files combined successfully. Output saved to {output_path}")
+    except subprocess.CalledProcessError as e:
+        print(f"Error during FFmpeg: {e}")
