@@ -23,9 +23,9 @@ const AudioTable = () => {
         fetchAudioList();
     }, [change]);
 
-    const handleDelete = (polish_path, english_path) => {
+    const handleDelete = (translated_path, original_path) => {
       const fetching = async () => {
-        const data = await removeEntry({polish_path: polish_path, english_path: english_path});
+        const data = await removeEntry({translated_path: translated_path, original_path: original_path});
         console.log(data);
         dispatch(setToChange(change + 1));
       }
@@ -54,9 +54,9 @@ const AudioTable = () => {
           <table>
             <thead>
               <tr>
-                <th>Word</th>
+                <th>Original Word</th>
+                <th>Translated Word</th>
                 <th>Play</th>
-                <th>Length</th>
                 <th>Familiarity</th>
                 <th>Delete</th>
               </tr>
@@ -64,14 +64,14 @@ const AudioTable = () => {
             <tbody>
               {audioFiles.map((file, index) => (
                 <tr key={index}>
-                  <td>{file.word}</td>
+                  <td>{file.original_word}</td>
+                  <td>{file.translated_word}</td>
                   <td>
                     <audio controls>
-                      <source src={`http://localhost:5000/audio/${file.polish_path}`} type="audio/webm" />
+                      <source src={`http://localhost:5000/audio/${file.translated_path}`} type="audio/webm" />
                       Your browser does not support the audio element.
                     </audio>
                   </td>
-                  <td>{file.polish_length}</td>
                   <>
                     <select id="dropdown" value={file.familiarity} onChange={(event) => handleFamChange(event, file.id)}>
                         <option value="">-- Choose an option --</option>
@@ -83,7 +83,7 @@ const AudioTable = () => {
                     </select>
                   </>
                   <td>
-                    <button onClick={() => handleDelete(file.polish_path, file.english_path)}>delete</button>
+                    <button onClick={() => handleDelete(file.translated_path, file.original_path)}>delete</button>
                   </td>
                 </tr>
               ))}

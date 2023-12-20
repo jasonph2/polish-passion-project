@@ -18,31 +18,32 @@ export async function helloWorld() {
     }
 }
 
-export async function addEntry({name, polish_file_name, familiarity, english_file_name}) {
-    try {
-        const response = await fetch(`${API_BASE_URL}/addentry`, {
-            method: "POST",
-            mode:"cors",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                word: name,
-                polish_path: polish_file_name,
-                familiarity: familiarity,
-                english_path: english_file_name
-            })
-        });
-        if (!response.ok) {
-            throw new Error("fetch failed");
-        }
-        return response.json();
-    } catch (error) {
-        throw new Error(`Error in fetchData: ${error.message}`);
-    }
-}
+// export async function addEntry({name, polish_file_name, familiarity, english_file_name, translated_word}) {
+//     try {
+//         const response = await fetch(`${API_BASE_URL}/addentry`, {
+//             method: "POST",
+//             mode:"cors",
+//             headers: {
+//               "Content-Type": "application/json"
+//             },
+//             body: JSON.stringify({
+//                 word: name,
+//                 polish_path: polish_file_name,
+//                 familiarity: familiarity,
+//                 english_path: english_file_name,
+//                 translated_word: translated_word
+//             })
+//         });
+//         if (!response.ok) {
+//             throw new Error("fetch failed");
+//         }
+//         return response.json();
+//     } catch (error) {
+//         throw new Error(`Error in fetchData: ${error.message}`);
+//     }
+// }
 
-export async function removeEntry({polish_path, english_path}) {
+export async function removeEntry({translated_path, original_path}) {
     try {
         const response = await fetch(`${API_BASE_URL}/removeentry`, {
             method: "POST",
@@ -51,8 +52,8 @@ export async function removeEntry({polish_path, english_path}) {
               "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                polish_path: polish_path,
-                english_path: english_path
+                translated_path: translated_path,
+                original_path: original_path
             })
         });
         if (!response.ok) {

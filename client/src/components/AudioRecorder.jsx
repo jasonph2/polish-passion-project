@@ -3,7 +3,7 @@ import * as React from 'react'
 import { setToChange } from '../redux/reducer';
 import { useDispatch, useSelector } from 'react-redux';
 import { useState } from 'react'
-import { addEntry } from '../api';
+// import { addEntry } from '../api';
 import { generateRandomString } from '../utilities/randomstring';
 
 export function AudioElement() {
@@ -14,6 +14,7 @@ export function AudioElement() {
   const [polishFileName, setPolishFileName] = useState("");
   const [englishFileName, setEnglishFileName] = useState("");
   const [randomString, setRandomString] = useState("");
+  const [translatedWord, setTranslatedWord] = useState("");
 
 
   const addAudioElement = (blob, arg) => {
@@ -56,7 +57,7 @@ export function AudioElement() {
 
   const handleUpdate = (name) => {
     const fetching = async () => {
-      const data = await addEntry({name: name, polish_file_name: polishFileName, familiarity: 1, english_file_name: englishFileName});
+      const data = await addEntry({name: name, polish_file_name: polishFileName, familiarity: 1, english_file_name: englishFileName, translated_word: translatedWord});
       console.log(data);
       dispatch(setToChange(change + 1));
     }
@@ -71,6 +72,10 @@ export function AudioElement() {
 
   const handleNameChange = (event) => {
     setName(event.target.value);
+  }
+
+  const handleTranslatedWordChange = (event) => {
+    setTranslatedWord(event.target.value);
   }
 
   return (
@@ -127,6 +132,13 @@ export function AudioElement() {
         id='textInput'
         value={name}
         onChange={handleNameChange}
+        placeholder='Word to Learn'
+      />
+      <input 
+        type='text'
+        id='textInput'
+        value={translatedWord}
+        onChange={handleTranslatedWordChange}
         placeholder='Word to Learn'
       />
       {showChoice ? (

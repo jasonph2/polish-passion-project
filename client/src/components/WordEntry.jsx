@@ -26,10 +26,10 @@ export function WordEntry() {
         const fetching = async () => {
             const data = await submitWord({word: word, path: path, familiarity: 1});
             console.log(data);
+            dispatch(setToChange(change + 1));
         }
         fetching();
         setPath("");
-        dispatch(setToChange(change + 1));
     }
 
     const handleNo = () => {

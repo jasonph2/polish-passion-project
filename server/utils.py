@@ -5,6 +5,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.audio import MIMEAudio
 from email import encoders
+import random
 from googletrans import Translator
 from gtts import gTTS
 
@@ -47,6 +48,16 @@ def text_to_speech(desired_text, language='pl'):
 
     tts = gTTS(text=desired_text, lang=language, slow=False)
 
-    path = f"{desired_text.replace(' ', '_')}.mp3"
+    path = f"{desired_text.replace(' ', '_')}-{generate_random_string(15)}.mp3"
     tts.save(f"{AUDIO_FILE_PATH}{path}")
     return path
+
+def generate_random_string(length):
+    characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+    result = ''
+
+    for _ in range(length):
+        random_index = random.randint(0, len(characters) - 1)
+        result += characters[random_index]
+
+    return result
