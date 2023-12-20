@@ -1,10 +1,12 @@
 import os
 import smtplib
-from config import EMAIL_USERNAME, EMAIL_PASSWORD
+from config import EMAIL_USERNAME, EMAIL_PASSWORD, AUDIO_FILE_PATH
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.audio import MIMEAudio
 from email import encoders
+from googletrans import Translator
+from gtts import gTTS
 
 def change_file_extension(file_path, new_extension):
     directory, filename_with_extension = os.path.split(file_path)
@@ -34,3 +36,17 @@ def send_email(recipient_email, mp3_file_path):
 
     print("Email sent successfully!")
 
+def translate_text(text, target_language='pl'):
+    translator = Translator()
+    
+    translated_text = translator.translate(text, dest=target_language)
+
+    return translated_text.text
+
+def text_to_speech(desired_text, language='pl'):
+
+    tts = gTTS(text=desired_text, lang=language, slow=False)
+
+    path = f"{desired_text.replace(' ', '_')}.mp3"
+    tts.save(f"{AUDIO_FILE_PATH}{path}")
+    return path

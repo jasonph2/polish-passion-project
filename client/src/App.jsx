@@ -5,6 +5,7 @@ import { helloWorld } from './api';
 // import YourComponent from './components/reduxTest';
 import AudioTable from './components/AudioEntryTable';
 import { PodcastGenerator } from './components/PodcastGenerator';
+import { WordEntry } from './components/WordEntry';
 
 function App() {
   const [a, setA] = useState(null);
@@ -36,8 +37,11 @@ function App() {
       <div>
         <PodcastGenerator />
       </div>
-      <div>
+      {/* <div>
         <AudioElement />
+      </div> */}
+      <div>
+        <WordEntry />
       </div>
       <div>
         <AudioTable />

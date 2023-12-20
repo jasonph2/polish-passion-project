@@ -4,7 +4,7 @@ import pymysql
 from config import AUDIO_FILE_PATH
 import os
 from audiohelper import convert_webm_to_mp3, duration_command
-from utils import change_file_extension
+from utils import change_file_extension, translate_text, text_to_speech
 from podgenerator import generate_pod
 
 app = Flask(__name__)
@@ -118,6 +118,47 @@ def update_fam_level():
             cursor.execute(update_query, (data["familiarity"], data["id"]))
             conn.commit()
         return jsonify({"message": "Value is updated"})
+    except Exception as e:
+        return jsonify({"message": f"Error: {str(e)}"})
+
+@app.route('/getaudio', methods=["POST"])
+def get_audio():
+
+    data = request.get_json()
+
+    translated_word = translate_text(data["word"])
+    path = text_to_speech(translated_word)
+
+    return jsonify({"path": path})
+
+@app.route('/removeaudio', methods=["POST"])
+def remove_audio():
+
+    data = request.get_json()
+
+    os.remove(f"{AUDIO_FILE_PATH}{data['path']}")
+
+    return jsonify({"message": "Audio is removed"})
+
+@app.route('/submitword', methods=["POST"])
+def submit_word():
+
+    data = request.get_json()
+    print(data)
+
+    original_word = data["word"]
+    original_path = text_to_speech(original_word)
+    original_duration = duration_command(f"{AUDIO_FILE_PATH}{original_path}")
+    translated_word = translate_text(data["word"])
+    translated_path = data["path"]
+    translated_duration = duration_command(f"{AUDIO_FILE_PATH}{translated_path}")
+
+    try:
+        with conn.cursor() as cur:
+            sql = "INSERT INTO db.words (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, familiarity) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            cur.execute(sql, (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, data["familiarity"]))
+        conn.commit()
+        return jsonify({"message": "Data should be inserted successfully at this point"})
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"})
     

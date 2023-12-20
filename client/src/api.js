@@ -110,3 +110,68 @@ export async function updateFamLevel({id, familiarity_level}) {
         throw new Error(`Error in fetchData: ${error.message}`);
     }
 }
+
+export async function getAudio({word}) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/getaudio`, {
+            method: "POST",
+            mode:"cors",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                word: word,
+            })
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}
+
+export async function removeAudio({path}) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/removeaudio`, {
+            method: "POST",
+            mode:"cors",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                path: path,
+            })
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}
+
+export async function submitWord({word, path, familiarity}) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/submitword`, {
+            method: "POST",
+            mode:"cors",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                word: word,
+                path: path,
+                familiarity: familiarity
+            })
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}
