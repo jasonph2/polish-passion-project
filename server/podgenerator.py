@@ -22,6 +22,8 @@ def generate_pod(conn, data):
             cur.execute(sql)
             audio_files = cur.fetchall()
 
+        print(audio_files)
+
         if data["familiarity_level"] == "random":
             paths = random_path_gen(audio_files, data)
         else:
@@ -50,18 +52,18 @@ def random_path_gen(audio_files, data):
 
         word = random.choice(audio_files)
 
-        paths.append(f"{AUDIO_FILE_PATH}{word['polish_path']}")
+        paths.append(f"{AUDIO_FILE_PATH}{word['translated_path']}")
 
-        create_silent_audio(f"{AUDIO_FILE_PATH}{word['word']}-{data['speed']}.mp3", gap_funcs[data['speed']](word['polish_length']))
-        paths.append(f"{AUDIO_FILE_PATH}{word['word']}-{data['speed']}.mp3")
-        silence_paths.append(f"{AUDIO_FILE_PATH}{word['word']}-{data['speed']}.mp3")
+        create_silent_audio(f"{AUDIO_FILE_PATH}{word['original_word']}-{data['speed']}.mp3", gap_funcs[data['speed']](word['translated_duration']))
+        paths.append(f"{AUDIO_FILE_PATH}{word['original_word']}-{data['speed']}.mp3")
+        silence_paths.append(f"{AUDIO_FILE_PATH}{word['original_word']}-{data['speed']}.mp3")
 
-        paths.append(f"{AUDIO_FILE_PATH}{word['english_path']}")
+        paths.append(f"{AUDIO_FILE_PATH}{word['original_path']}")
         paths.append(f"{AUDIO_FILE_PATH}set-silence.mp3")
 
-        total_time += word["english_length"]
-        total_time += Decimal(str(gap_funcs[data['speed']](word['polish_length'])))
-        total_time += word["polish_length"]
+        total_time += word["original_duration"]
+        total_time += Decimal(str(gap_funcs[data['speed']](word['translated_duration'])))
+        total_time += word["translated_duration"]
         total_time += Decimal(data["gap"])
 
         index_of_random_dict = audio_files.index(word)
@@ -98,18 +100,18 @@ def bias_gen(audio_files, data, bias):
         word = audio_files[word_idx]
         print(word["familiarity"])
 
-        paths.append(f"{AUDIO_FILE_PATH}{word['polish_path']}")
+        paths.append(f"{AUDIO_FILE_PATH}{word['translated_path']}")
 
-        create_silent_audio(f"{AUDIO_FILE_PATH}{word['word']}-{data['speed']}.mp3", gap_funcs[data['speed']](word['polish_length']))
-        paths.append(f"{AUDIO_FILE_PATH}{word['word']}-{data['speed']}.mp3")
-        silence_paths.append(f"{AUDIO_FILE_PATH}{word['word']}-{data['speed']}.mp3")
+        create_silent_audio(f"{AUDIO_FILE_PATH}{word['original_word']}-{data['speed']}.mp3", gap_funcs[data['speed']](word['translated_duration']))
+        paths.append(f"{AUDIO_FILE_PATH}{word['original_word']}-{data['speed']}.mp3")
+        silence_paths.append(f"{AUDIO_FILE_PATH}{word['original_word']}-{data['speed']}.mp3")
 
-        paths.append(f"{AUDIO_FILE_PATH}{word['english_path']}")
+        paths.append(f"{AUDIO_FILE_PATH}{word['original_path']}")
         paths.append(f"{AUDIO_FILE_PATH}set-silence.mp3")
 
-        total_time += word["english_length"]
-        total_time += Decimal(str(gap_funcs[data['speed']](word['polish_length'])))
-        total_time += word["polish_length"]
+        total_time += word["original_duration"]
+        total_time += Decimal(str(gap_funcs[data['speed']](word['translated_duration'])))
+        total_time += word["translated_duration"]
         total_time += Decimal(data["gap"])
 
         denom_list = [x for x in denom_list if x != word_idx]
