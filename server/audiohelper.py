@@ -41,10 +41,16 @@ def duration_command(file_path):
 def combine_audio_files(output_path, input_files):
     ffmpeg_path = r'C:\Users\Jason\Polish-Passion-Project\ffmpeg-2023-12-14-git-5256b2fbe6-essentials_build\bin\ffmpeg.exe'
 
+    audio_codec = 'mp3'
+    sample_rate = '44100'
+    bit_rate = '192k'
+
     command = [
         ffmpeg_path,
         '-i', f'concat:{("|".join(input_files))}',
-        '-c', 'copy',
+        '-c:a', audio_codec,
+        '-b:a', bit_rate,
+        '-ar', sample_rate,
         output_path
     ]
 
@@ -62,8 +68,8 @@ def create_silent_audio(output_path, duration):
         '-f', 'lavfi',
         '-t', str(duration),
         '-i', 'anullsrc=channel_layout=stereo:sample_rate=44100',
-        '-c:a', 'libmp3lame',  # Use MP3 codec for the silent audio
-        '-y',  # Overwrite output file if it exists
+        '-c:a', 'libmp3lame',
+        '-y',
         output_path
     ]
 

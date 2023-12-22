@@ -29,13 +29,14 @@ def generate_pod(conn, data):
         else:
             paths = bias_gen(audio_files, data, data["familiarity_level"])
 
-        combine_audio_files(f"{AUDIO_FILE_PATH}testcombination.mp3", paths[0])
+        print(paths)
+        combine_audio_files(f"{AUDIO_FILE_PATH}testcombination2.mp3", paths[0])
 
-        send_email(data["email"], f"{AUDIO_FILE_PATH}testcombination.mp3")
+        send_email(data["email"], f"{AUDIO_FILE_PATH}testcombination2.mp3")
         
-        os.remove(f"{AUDIO_FILE_PATH}set-silence.mp3")
-        for path in paths[1]:
-            os.remove(path)
+        # os.remove(f"{AUDIO_FILE_PATH}set-silence.mp3")
+        # for path in paths[1]:
+        #     os.remove(path)
 
     except Exception as e:
         print(f"Error: {str(e)}")
