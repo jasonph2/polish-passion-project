@@ -3,9 +3,10 @@ from flask_cors import CORS
 import pymysql
 from config import AUDIO_FILE_PATH
 import os
-from audiohelper import convert_webm_to_mp3, duration_command
-from utils import change_file_extension, translate_text, text_to_speech
+from audiohelper import duration_command
+from utils import translate_text, text_to_speech
 from podgenerator import generate_pod
+from datetime import date
 
 app = Flask(__name__)
 CORS(app)
@@ -155,8 +156,8 @@ def submit_word():
 
     try:
         with conn.cursor() as cur:
-            sql = "INSERT INTO db.words (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, familiarity) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-            cur.execute(sql, (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, data["familiarity"]))
+            sql = "INSERT INTO db.words (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, familiarity, date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+            cur.execute(sql, (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, data["familiarity"], date.today()))
         conn.commit()
         return jsonify({"message": "Data should be inserted successfully at this point"})
     except Exception as e:
