@@ -176,3 +176,21 @@ export async function submitWord({word, path, familiarity}) {
         throw new Error(`Error in fetchData: ${error.message}`);
     }
 }
+
+export async function generatePhrase() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/generatephrase`, {
+            method: "POST",
+            mode:"cors",
+            headers: {
+              "Content-Type": "application/json"
+            },
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}

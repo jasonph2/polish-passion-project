@@ -6,6 +6,7 @@ import { helloWorld } from './api';
 import AudioTable from './components/AudioEntryTable';
 import { PodcastGenerator } from './components/PodcastGenerator';
 import { WordEntry } from './components/WordEntry';
+import { Generator } from './components/Generator';
 
 function App() {
   const [a, setA] = useState(null);
@@ -36,6 +37,9 @@ function App() {
       </div>
       <div>
         <PodcastGenerator />
+      </div>
+      <div>
+        <Generator />
       </div>
       {/* <div>
         <AudioElement />

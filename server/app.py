@@ -7,6 +7,7 @@ from audiohelper import duration_command
 from utils import translate_text, text_to_speech
 from podgenerator import generate_pod
 from datetime import date
+from aigenerator import with_turbo
 
 app = Flask(__name__)
 CORS(app)
@@ -162,6 +163,13 @@ def submit_word():
         return jsonify({"message": "Data should be inserted successfully at this point"})
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"})
+
+@app.route('/generatephrase', methods=["POST"])
+def generate_phrase():
+
+    phrase = with_turbo(conn)
+
+    return jsonify({"message": phrase})
     
 if __name__ == '__main__':
     app.run()
