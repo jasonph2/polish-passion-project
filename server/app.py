@@ -46,7 +46,7 @@ def serve_audio(filename):
 def get_audio_list():
     try:
         with conn.cursor() as cur:
-            sql = "SELECT * FROM db.words"
+            sql = "SELECT * FROM db.words ORDER BY id DESC"
             cur.execute(sql)
             audio_files = cur.fetchall()
         conn.commit()

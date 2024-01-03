@@ -16,6 +16,7 @@ def with_turbo(conn):
             individual_words = [word.translate(translator) for sentence in all for word in sentence['translated_word'].split()]
             individual_words = list(filter(lambda x: x.strip() != '', individual_words))
             random.shuffle(individual_words)
+            individual_words = set(individual_words)
             print(individual_words)
 
             # make an OpenAI request
@@ -27,9 +28,10 @@ def with_turbo(conn):
                     {"role": "user", "content": str(individual_words)}
                 ]
             )
-            print(completion.choices[0].message.content)
+            # print(completion.choices[0].message.content)
             generated_content = completion.choices[0].message.content
             new_translated_list = generated_content.split("\n")
+            new_translated_list = list(filter(lambda x: x != '', new_translated_list))
             print(new_translated_list)
 
     except Exception as e:
