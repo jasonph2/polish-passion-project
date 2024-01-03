@@ -38,9 +38,9 @@ function App() {
       <div>
         <PodcastGenerator />
       </div>
-      <div>
+      {/* <div>
         <Generator />
-      </div>
+      </div> */}
       {/* <div>
         <AudioElement />
       </div> */}
