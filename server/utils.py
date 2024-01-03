@@ -48,6 +48,7 @@ def text_to_speech(desired_text, language='pl'):
 
     tts = gTTS(text=desired_text, lang=language, slow=False)
 
+    desired_text = desired_text.replace('?', '')
     path = f"{desired_text.replace(' ', '_')}-{generate_random_string(15)}.mp3"
     tts.save(f"{AUDIO_FILE_PATH}{path}")
     return path
