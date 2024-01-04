@@ -30,16 +30,20 @@ def generate_pod(conn, data):
         else:
             basic_paths = bias_gen(audio_files, data, data["familiarity_level"])
 
-        generated_phrase_paths = phrase_audio_gen(with_turbo(conn), data)
+        if int(data["percent"]) > 0:
+            generated_phrase_paths = phrase_audio_gen(with_turbo(conn), data)
+        else:
+            generated_phrase_paths = ([], [])
 
         basic_audio = ""
         generated_phrase_audio = ""
         final_audio = ""
         if len(basic_paths[0]) > 0 and len(generated_phrase_paths[0]) > 0:
+            print(basic_paths[0])
             basic_audio = f"{AUDIO_FILE_PATH}{generate_random_string(20)}.mp3"
             combine_audio_files(basic_audio, basic_paths[0])
 
-
+            print(generated_phrase_paths[0])
             generated_phrase_audio = f"{AUDIO_FILE_PATH}{generate_random_string(20)}.mp3"
             combine_audio_files(generated_phrase_audio, generated_phrase_paths[0])
 
@@ -48,11 +52,15 @@ def generate_pod(conn, data):
             combine_audio_files(final_audio, [basic_audio, generated_phrase_audio])
 
         elif len(basic_paths[0]) > 0:
+            # for path in basic_paths[0]:
+            #     if os.path.exists(path):
+            #         print(f"{path} exists.")
+            #     else:
+            #         print(f"{path} does not exist.")
             final_audio = f"{AUDIO_FILE_PATH}{generate_random_string(20)}.mp3"
             combine_audio_files(final_audio, basic_paths[0])
 
         elif len(generated_phrase_paths[0]) > 0:
-            print("HERE123")
             print(generated_phrase_paths[0])
             final_audio = f"{AUDIO_FILE_PATH}{generate_random_string(20)}.mp3"
             combine_audio_files(final_audio, generated_phrase_paths[0])
@@ -165,10 +173,8 @@ def phrase_audio_gen(phrases, data):
     total_time = 0
 
     while total_time < Decimal(data["length"]) * 60 * Decimal(int(data["percent"]) * .01) and phrases_idx < len(phrases):
-        print("HERE1")
         translated_path = text_to_speech(phrases[phrases_idx])
         translated_duration = duration_command(f"{AUDIO_FILE_PATH}{translated_path}")
-        print("HERE2")
 
         generated_phrase_paths.append(f"{AUDIO_FILE_PATH}{translated_path}")
 
