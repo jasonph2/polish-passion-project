@@ -1,57 +1,41 @@
-import { useState, useEffect } from 'react'
-import './App.css'
-import { AudioElement } from './components/AudioRecorder';
-import { helloWorld } from './api';
-// import YourComponent from './components/reduxTest';
+import React from 'react';
+import { BrowserRouter as Router, Route, NavLink, Routes } from 'react-router-dom';
+import './App.css';
 import AudioTable from './components/AudioEntryTable';
 import { PodcastGenerator } from './components/PodcastGenerator';
 import { WordEntry } from './components/WordEntry';
-import { Generator } from './components/Generator';
+
+const WordAndAudioTab = () => (
+  <>
+    <WordEntry />
+    <AudioTable />
+  </>
+);
 
 function App() {
-  const [a, setA] = useState(null);
-
-  useEffect(() => {
-    const fetching = async () => {
-      const data = await helloWorld();
-      setA(data);
-    }
-    fetching();
-  }, []);
-
-  useEffect(() => {
-    if (self.crossOriginIsolated) {
-      console.log("enabled");
-    } else {
-      console.log("failed");
-    }
-  }, [])
-  
   return (
-    <>
-      <div className='App'>
+    <Router>
+      <div className="App">
         <h1>App to Practice Polish</h1>
-        {/* {a &&
-          <div>{a.message}</div>
-        } */}
       </div>
-      <div>
-        <PodcastGenerator />
+
+      <nav className="navbar">
+        <NavLink to="/word-and-audio" className="nav-link">
+          Word and Audio
+        </NavLink>
+        <NavLink to="/podcast-generator" className="nav-link">
+          Podcast Generator
+        </NavLink>
+      </nav>
+
+      <div className="content">
+        <Routes>
+          <Route path="/podcast-generator" element={<PodcastGenerator />} />
+          <Route path="/word-and-audio" element={<WordAndAudioTab />} />
+        </Routes>
       </div>
-      {/* <div>
-        <Generator />
-      </div> */}
-      {/* <div>
-        <AudioElement />
-      </div> */}
-      <div>
-        <WordEntry />
-      </div>
-      <div>
-        <AudioTable />
-      </div>
-    </>
-  )
+    </Router>
+  );
 }
 
 export default App;

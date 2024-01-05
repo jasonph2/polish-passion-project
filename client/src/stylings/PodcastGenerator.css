@@ -1,0 +1,23 @@
+/* PodcastGenerator.css */
+
+.podcast-generator-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+    border: 2px solid #ccc; /* Add a border */
+    border-radius: 8px; /* Add rounded corners */
+    max-width: 1200px; /* Limit the width */
+    margin: 0 auto; /* Center the container */
+  }
+.podcast-custom-item {
+    padding: 4px;
+    margin-top: 2px;
+    margin-bottom: 2px;
+    margin-left: 2px;
+    margin-right: 2px;
+}
+.generate-button {
+    margin: 6px;
+}
+  

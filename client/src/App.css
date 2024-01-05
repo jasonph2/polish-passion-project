@@ -4,3 +4,30 @@
   text-align: center;
 }
 
+.App {
+  margin-top: 100px;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-around;
+  background-color: #f0f0f0;
+  padding: 10px;
+  width: 300px; /* Set the desired fixed width */
+  margin: 0 auto; /* Center the navbar horizontally */
+  margin-bottom: 20px;
+}
+
+.nav-link {
+  text-decoration: none;
+  color: #333;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.nav-link:hover {
+  background-color: #e0e0e0;
+}
+

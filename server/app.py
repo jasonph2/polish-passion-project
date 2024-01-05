@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, send_from_directory, request, render_template
 from flask_cors import CORS
 import pymysql
-from config import AUDIO_FILE_PATH
+from config import AUDIO_FILE_PATH, USER_EMAIL
 import os
 from audiohelper import duration_command
 from utils import translate_text, text_to_speech
@@ -100,6 +100,7 @@ def remove_entry():
 def generate_podcast():
 
     data = request.get_json()
+    data["email"] = USER_EMAIL
     print(data)
     
     try:
