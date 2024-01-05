@@ -25,7 +25,7 @@ def generate_pod(conn, data):
             audio_files = cur.fetchall()
 
 
-        if data["familiarity_level"] == "random":
+        if data["familiarity_level"] == "Random":
             basic_paths = random_path_gen(audio_files, data)
         else:
             basic_paths = bias_gen(audio_files, data, data["familiarity_level"])
@@ -33,7 +33,7 @@ def generate_pod(conn, data):
         if int(data["percent"]) > 0:
             generated_phrase_paths = phrase_audio_gen(with_turbo(conn), data)
         else:
-            generated_phrase_paths = ([], [])
+            generated_phrase_paths = ([], [], 0)
 
         basic_audio = ""
         generated_phrase_audio = ""
@@ -78,7 +78,7 @@ def generate_pod(conn, data):
         temp_set = set(generated_phrase_paths[0])
         for path in temp_set:
             os.remove(path)
-
+        return Decimal(basic_paths[2]) + Decimal(generated_phrase_paths[2])
     except Exception as e:
         print(f"Error: {str(e)}")
 
@@ -112,7 +112,7 @@ def random_path_gen(audio_files, data):
         audio_files.pop(index_of_random_dict)
 
     print(f"Final file length: {total_time}")
-    return (basic_paths, silence_basic_paths)
+    return (basic_paths, silence_basic_paths, total_time)
 
 def bias_gen(audio_files, data, bias):
     with open('time_funcs.pkl', 'rb') as file:
@@ -121,11 +121,11 @@ def bias_gen(audio_files, data, bias):
     denom_list = []
     for i in range(len(audio_files)):
         idx = 0
-        if bias == "familiar":
+        if bias == "Familiar":
             while idx < familiar_bias_probs[audio_files[i]["familiarity"]]:
                 denom_list.append(i)
                 idx += 1
-        elif bias == "unfamiliar":
+        elif bias == "Unfamiliar":
             while idx < unfamiliar_bias_probs[audio_files[i]["familiarity"]]:
                 denom_list.append(i)
                 idx += 1
@@ -159,7 +159,7 @@ def bias_gen(audio_files, data, bias):
         denom_list = [x for x in denom_list if x != word_idx]
 
     print(f"Final file length: {total_time}")
-    return (basic_paths, silence_basic_paths)
+    return (basic_paths, silence_basic_paths, total_time)
 
 def phrase_audio_gen(phrases, data):
     with open('time_funcs.pkl', 'rb') as file:
@@ -200,4 +200,4 @@ def phrase_audio_gen(phrases, data):
         phrases_idx += 1
 
     print(f"Final file length: {total_time}")
-    return (generated_phrase_paths, silence_paths)
+    return (generated_phrase_paths, silence_paths, total_time)

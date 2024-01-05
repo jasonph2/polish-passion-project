@@ -6,7 +6,7 @@ import os
 from audiohelper import duration_command
 from utils import translate_text, text_to_speech
 from podgenerator import generate_pod
-from datetime import date
+from datetime import date, datetime
 from aigenerator import with_turbo
 
 app = Flask(__name__)
@@ -104,7 +104,11 @@ def generate_podcast():
     print(data)
     
     try:
-        generate_pod(conn, data)
+        pod_time = generate_pod(conn, data)
+        with conn.cursor() as cur:
+            sql = "INSERT INTO db.podcasts (date, duration, generated_percentage, familiarity, listened) VALUES (%s, %s, %s, %s, %s)"
+            cur.execute(sql, (datetime.now(), pod_time, data["percent"], data["familiarity_level"], 0))
+        conn.commit()
         return jsonify({"message": "Podcast is generated"})
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"})

@@ -56,9 +56,9 @@ export function PodcastGenerator() {
                     <label htmlFor="familiarity-dropdown" className='podcast-custom-item'>Familiarity:</label>
                     <select id="familiarity-dropdown" value={famLevel} onChange={handleFamChange} className='podcast-custom-item'>
                         <option value="">-- Choose an option --</option>
-                        <option value="unfamiliar">Unfamiliar</option>
-                        <option value="random">Completely Random</option>
-                        <option value="familiar">Familiar</option>
+                        <option value="Unfamiliar">Unfamiliar</option>
+                        <option value="Random">Completely Random</option>
+                        <option value="Familiar">Familiar</option>
                     </select>
                     <label htmlFor="speed-dropdown" className='podcast-custom-item'>Speed:</label>
                     <select id="speed-dropdown" value={speed} onChange={handleSpeedChange} className='podcast-custom-item'>
