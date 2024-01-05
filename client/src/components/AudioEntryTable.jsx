@@ -15,6 +15,7 @@ const AudioTable = () => {
               const data = await response.json();
               console.log(data);
               dispatch(setAudioFiles(data));
+              console.log(audioFiles)
             } catch (error) {
               console.error('Error fetching audio list:', error);
             }
@@ -22,6 +23,11 @@ const AudioTable = () => {
     
         fetchAudioList();
     }, [change]);
+
+    useEffect(() => {
+      console.log('Audio files in state:', audioFiles);
+    }, [audioFiles]);
+  
 
     const handleDelete = (translated_path, original_path) => {
       const fetching = async () => {
@@ -62,12 +68,12 @@ const AudioTable = () => {
               </tr>
             </thead>
             <tbody>
-              {audioFiles.map((file, index) => (
-                <tr key={index}>
+              {audioFiles.map((file) => (
+                <tr key={file.id}>
                   <td>{file.original_word}</td>
                   <td>{file.translated_word}</td>
                   <td>
-                    <audio controls>
+                    <audio key={file.id} controls>
                       <source src={`http://localhost:5000/audio/${file.translated_path}`} type="audio/webm" />
                       Your browser does not support the audio element.
                     </audio>
