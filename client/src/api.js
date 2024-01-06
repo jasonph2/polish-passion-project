@@ -18,6 +18,24 @@ export async function helloWorld() {
     }
 }
 
+export async function getAudioList() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/audio-list`, {
+            method: "GET",
+            mode:"cors",
+            headers: {
+              "Content-Type": "application/json"
+            }
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}
+
 // export async function addEntry({name, polish_file_name, familiarity, english_file_name, translated_word}) {
 //     try {
 //         const response = await fetch(`${API_BASE_URL}/addentry`, {

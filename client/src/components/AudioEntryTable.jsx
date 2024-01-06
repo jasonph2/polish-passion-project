@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAudioFiles, setToChange } from '../redux/reducer';
-import { removeEntry, updateFamLevel } from '../api';
+import { getAudioList, removeEntry, updateFamLevel } from '../api';
 
 const AudioTable = () => {
     const dispatch = useDispatch();
@@ -11,11 +11,8 @@ const AudioTable = () => {
     useEffect(() => {
         const fetchAudioList = async () => {
             try {
-              const response = await fetch('http://localhost:5000/audio-list');
-              const data = await response.json();
-              console.log(data);
-              dispatch(setAudioFiles(data));
-              console.log(audioFiles)
+              const response = await getAudioList();
+              dispatch(setAudioFiles(response));
             } catch (error) {
               console.error('Error fetching audio list:', error);
             }
