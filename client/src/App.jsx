@@ -4,6 +4,7 @@ import './App.css';
 import AudioTable from './components/AudioEntryTable';
 import { PodcastGenerator } from './components/PodcastGenerator';
 import { WordEntry } from './components/WordEntry';
+import PodcastHistoryTable from './components/PodcastHistoryTable';
 
 const WordAndAudioTab = () => (
   <>
@@ -11,6 +12,13 @@ const WordAndAudioTab = () => (
     <AudioTable />
   </>
 );
+
+const PodcastTab = () => (
+  <>
+    <PodcastGenerator />
+    <PodcastHistoryTable />
+  </>
+)
 
 function App() {
   return (
@@ -30,7 +38,7 @@ function App() {
 
       <div className="content">
         <Routes>
-          <Route path="/podcast-generator" element={<PodcastGenerator />} />
+          <Route path="/podcast-generator" element={<PodcastTab />} />
           <Route path="/word-and-audio" element={<WordAndAudioTab />} />
         </Routes>
       </div>

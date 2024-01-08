@@ -212,3 +212,64 @@ export async function generatePhrase() {
         throw new Error(`Error in fetchData: ${error.message}`);
     }
 }
+
+export async function getPodcastList() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/podcast-list`, {
+            method: "GET",
+            mode:"cors",
+            headers: {
+              "Content-Type": "application/json"
+            }
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}
+
+export async function removePodcastEntry({id}) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/removepodcastentry`, {
+            method: "POST",
+            mode:"cors",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id: id
+            })
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}
+
+export async function updateListenedStatus({id, listened}) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/updatelistenedstatus`, {
+            method: "POST",
+            mode:"cors",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id: id,
+                listened: listened,
+            })
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}
