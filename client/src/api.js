@@ -20,7 +20,7 @@ export async function helloWorld() {
 
 export async function getAudioList() {
     try {
-        const response = await fetch(`${API_BASE_URL}/audio-list`, {
+        const response = await fetch(`${API_BASE_URL}/audiolist`, {
             method: "GET",
             mode:"cors",
             headers: {
@@ -215,7 +215,7 @@ export async function generatePhrase() {
 
 export async function getPodcastList() {
     try {
-        const response = await fetch(`${API_BASE_URL}/podcast-list`, {
+        const response = await fetch(`${API_BASE_URL}/podcastlist`, {
             method: "GET",
             mode:"cors",
             headers: {

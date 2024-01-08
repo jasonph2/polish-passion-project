@@ -42,7 +42,7 @@ def hello_world():
 def serve_audio(filename):
     return send_from_directory(AUDIO_FILE_PATH, filename)
 
-@app.route('/audio-list')
+@app.route('/audiolist')
 def get_audio_list():
     try:
         with conn.cursor() as cur:
