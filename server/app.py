@@ -175,6 +175,48 @@ def generate_phrase():
     phrase = with_turbo(conn)
 
     return jsonify({"message": phrase})
+
+@app.route('/podcastlist')
+def get_podcast_list():
+    try:
+        with conn.cursor() as cur:
+            sql = "SELECT * FROM db.podcasts ORDER BY id DESC"
+            cur.execute(sql)
+            podcasts = cur.fetchall()
+        conn.commit()
+        return jsonify(podcasts)
+    except Exception as e:
+        return jsonify([{"message": f"Error: {str(e)}"}])
+    
+@app.route('/removepodcastentry', methods=["POST"])
+def remove_podcast_entry():
+
+    data = request.get_json()
+    print(data)
+    
+    try:
+        with conn.cursor() as cur:
+            sql = "DELETE FROM db.podcasts WHERE id = %s"
+            cur.execute(sql, (data["id"]))
+        conn.commit()
+        return jsonify({"message": "Data should be deleted successfully at this point"})
+    except Exception as e:
+        return jsonify({"message": f"Error: {str(e)}"})
+
+@app.route('/updatelistenedstatus', methods=["POST"])
+def update_listened_status():
+
+    data = request.get_json()
+    print(data)
+
+    try:
+        with conn.cursor() as cursor:
+            update_query = f"UPDATE db.podcasts SET listened = %s WHERE id = %s"
+            cursor.execute(update_query, (data["listened"], data["id"]))
+            conn.commit()
+        return jsonify({"message": "Value is updated"})
+    except Exception as e:
+        return jsonify({"message": f"Error: {str(e)}"})
     
 if __name__ == '__main__':
     app.run()

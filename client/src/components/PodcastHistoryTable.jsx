@@ -61,7 +61,7 @@ export function PodcastHistoryTable() {
                   <td>{pod.generated_percentage}</td>
                   <td>{pod.familiarity}</td>
                   <>
-                    <select id="dropdown" value={pod.listened} onChange={(event) => handleListenedChange(event, file.id)}>
+                    <select id="dropdown" value={pod.listened} onChange={(event) => handleListenedChange(event, pod.id)}>
                         <option value="">-- Choose an option --</option>
                         <option value="0">No</option>
                         <option value="1">Yes</option>
