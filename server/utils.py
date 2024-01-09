@@ -17,12 +17,15 @@ def change_file_extension(file_path, new_extension):
 
     return new_file_path
 
-def send_email(recipient_email, mp3_file_path):
+def send_email(recipient_email, mp3_file_path, audio_file_num, audio_file_total_num):
 
     message = MIMEMultipart()
     message['From'] = EMAIL_USERNAME
     message['To'] = recipient_email
-    message['Subject'] = 'Check out this MP3 file!'
+    if audio_file_total_num > 1:
+        message['Subject'] = f"MP3 file {audio_file_num} out of {audio_file_total_num}"
+    else:
+        message['Subject'] = "Here is your MP3 file!"
 
     with open(mp3_file_path, 'rb') as mp3_file:
         mp3_attachment = MIMEAudio(mp3_file.read(), 'mp3')
