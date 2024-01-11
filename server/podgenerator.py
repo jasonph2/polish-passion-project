@@ -57,7 +57,7 @@ def generate_pod(conn, data):
                     combine_audio_files(temp_path, generated_phrase_paths[0][generated_phrase_paths[3][i]: generated_phrase_paths[3][i + 1]])
                     final_audio.append(temp_path)
 
-            if len(final_audio) == 2 and Decimal(basic_paths[2]) + Decimal(generated_phrase_paths[2]) < 720:
+            if len(final_audio) == 2 and Decimal(basic_paths[2]) + Decimal(generated_phrase_paths[2]) < 780:
                 final_audio_path = f"{AUDIO_FILE_PATH}{generate_random_string(20)}.mp3"
                 combine_audio_files(final_audio_path, final_audio)
                 final_audio = [final_audio_path]
