@@ -273,3 +273,26 @@ export async function updateListenedStatus({id, listened}) {
         throw new Error(`Error in fetchData: ${error.message}`);
     }
 }
+
+export async function submitManualWord({original_word, translated_word, familiarity}) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/submitmanualword`, {
+            method: "POST",
+            mode:"cors",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                original_word: original_word,
+                translated_word: translated_word,
+                familiarity: familiarity
+            })
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}

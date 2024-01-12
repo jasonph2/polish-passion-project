@@ -218,5 +218,27 @@ def update_listened_status():
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"})
     
+@app.route('/submitmanualword', methods=["POST"])
+def submit_manual_word():
+
+    data = request.get_json()
+    print(data)
+
+    original_word = data["original_word"]
+    original_path = text_to_speech(original_word, "en")
+    original_duration = duration_command(f"{AUDIO_FILE_PATH}{original_path}")
+    translated_word = data["translated_word"]
+    translated_path = text_to_speech(translated_word, "pl")
+    translated_duration = duration_command(f"{AUDIO_FILE_PATH}{translated_path}")
+
+    try:
+        with conn.cursor() as cur:
+            sql = "INSERT INTO db.words (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, familiarity, date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+            cur.execute(sql, (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, data["familiarity"], date.today()))
+        conn.commit()
+        return jsonify({"message": "Data should be inserted successfully at this point"})
+    except Exception as e:
+        return jsonify({"message": f"Error: {str(e)}"})
+    
 if __name__ == '__main__':
     app.run()
