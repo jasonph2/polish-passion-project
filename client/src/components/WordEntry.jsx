@@ -100,20 +100,22 @@ export function WordEntry() {
                     )}
                 </div>
             ) : (
-                <div>
+                <div style={{padding: '10px' }}>
                     <input 
                         type='text'
                         id='textInput'
                         value={manOrigWord}
                         onChange={handleManualOrigWordChange}
                         placeholder='Original Word to Learn'
+                        style={{padding: '2px', marginRight: '4px' }}
                     />
                     <input 
                         type='text'
                         id='textInput'
                         value={manTranWord}
                         onChange={handleManualTranWordChange}
-                        placeholder='Original Word to Learn'
+                        placeholder='Translated Word to Learn'
+                        style={{padding: '2px', marginLeft: '4px' }}
                     />
                     {manOrigWord !== "" && manTranWord != "" ? (
                         <div>
