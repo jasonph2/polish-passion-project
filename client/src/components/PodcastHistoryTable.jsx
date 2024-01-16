@@ -64,7 +64,7 @@ export function PodcastHistoryTable() {
                 <tr>
                   <th>Date</th>
                   <th>Duration</th>
-                  <th>Generated Percentage</th>
+                  <th>Generated %</th>
                   <th>Familiarity</th>
                   <th>Listened</th>
                   <th>Delete</th>
@@ -73,7 +73,7 @@ export function PodcastHistoryTable() {
               <tbody>
                 {podcasts.map((pod) => (
                   <tr key={pod.id}>
-                    <td>{pod.date}</td>
+                    <td>{new Date(pod.date).toLocaleString()}</td>
                     <td>{formatSeconds(pod.duration)}</td>
                     <td>{pod.generated_percentage}</td>
                     <td>{pod.familiarity}</td>
