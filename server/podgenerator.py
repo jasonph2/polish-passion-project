@@ -111,7 +111,7 @@ def random_path_gen(audio_files, data):
     idx_greater_12 = [0]
     multiple = 12 * 60
 
-    while total_time < Decimal(data["length"]) * 60 * Decimal((1 - int(data["percent"]) * .01)) and len(audio_files) > 0:
+    while total_time < Decimal(data["length"]) * 60 * Decimal((1 - int(data["percent"]) * .01)) * Decimal((1 - int(data["percent_orig"]) * .01)) and len(audio_files) > 0:
 
         if total_time > multiple:
             idx_greater_12.append(len(basic_paths))
@@ -126,6 +126,31 @@ def random_path_gen(audio_files, data):
         silence_basic_paths.append(f"{AUDIO_FILE_PATH}{word['original_word']}-{data['speed']}.mp3")
 
         basic_paths.append(f"{AUDIO_FILE_PATH}{word['original_path']}")
+        basic_paths.append(f"{AUDIO_FILE_PATH}set-basic-silence.mp3")
+
+        total_time += word["original_duration"]
+        total_time += Decimal(str(gap_funcs[data['speed']](word['translated_duration'])))
+        total_time += word["translated_duration"]
+        total_time += Decimal(data["gap"])
+
+        index_of_random_dict = audio_files.index(word)
+        audio_files.pop(index_of_random_dict)
+
+    while total_time < Decimal(data["length"]) * 60 * Decimal((1 - int(data["percent"]) * .01)) and len(audio_files) > 0:
+
+        if total_time > multiple:
+            idx_greater_12.append(len(basic_paths))
+            multiple += 12 * 60
+
+        word = random.choice(audio_files)
+
+        basic_paths.append(f"{AUDIO_FILE_PATH}{word['original_path']}")
+
+        create_silent_audio(f"{AUDIO_FILE_PATH}{word['original_word']}-{data['speed']}.mp3", gap_funcs[data['speed']](word['translated_duration']))
+        basic_paths.append(f"{AUDIO_FILE_PATH}{word['original_word']}-{data['speed']}.mp3")
+        silence_basic_paths.append(f"{AUDIO_FILE_PATH}{word['original_word']}-{data['speed']}.mp3")
+
+        basic_paths.append(f"{AUDIO_FILE_PATH}{word['translated_path']}")
         basic_paths.append(f"{AUDIO_FILE_PATH}set-basic-silence.mp3")
 
         total_time += word["original_duration"]
@@ -161,7 +186,7 @@ def bias_gen(audio_files, data, bias):
     idx_greater_12 = [0]
     multiple = 12 * 60
 
-    while total_time < Decimal(data["length"]) * 60 * Decimal((1 - int(data["percent"]) * .01)) and len(denom_list) > 0:
+    while total_time < Decimal(data["length"]) * 60 * Decimal((1 - int(data["percent"]) * .01)) * Decimal((1 - int(data["percent_orig"]) * .01)) and len(denom_list) > 0:
 
         if total_time > multiple:
             idx_greater_12.append(len(basic_paths))
@@ -178,6 +203,32 @@ def bias_gen(audio_files, data, bias):
         silence_basic_paths.append(f"{AUDIO_FILE_PATH}{word['original_word']}-{data['speed']}.mp3")
 
         basic_paths.append(f"{AUDIO_FILE_PATH}{word['original_path']}")
+        basic_paths.append(f"{AUDIO_FILE_PATH}set-basic-silence.mp3")
+
+        total_time += word["original_duration"]
+        total_time += Decimal(str(gap_funcs[data['speed']](word['translated_duration'])))
+        total_time += word["translated_duration"]
+        total_time += Decimal(data["gap"])
+
+        denom_list = [x for x in denom_list if x != word_idx]
+
+    while total_time < Decimal(data["length"]) * 60 * Decimal((1 - int(data["percent"]) * .01)) and len(denom_list) > 0:
+
+        if total_time > multiple:
+            idx_greater_12.append(len(basic_paths))
+            multiple += 12 * 60
+
+        random_int = random.randint(0, len(denom_list) - 1)
+        word_idx = denom_list[random_int]
+        word = audio_files[word_idx]
+
+        basic_paths.append(f"{AUDIO_FILE_PATH}{word['original_path']}")
+
+        create_silent_audio(f"{AUDIO_FILE_PATH}{word['original_word']}-{data['speed']}.mp3", gap_funcs[data['speed']](word['translated_duration']))
+        basic_paths.append(f"{AUDIO_FILE_PATH}{word['original_word']}-{data['speed']}.mp3")
+        silence_basic_paths.append(f"{AUDIO_FILE_PATH}{word['original_word']}-{data['speed']}.mp3")
+
+        basic_paths.append(f"{AUDIO_FILE_PATH}{word['translated_path']}")
         basic_paths.append(f"{AUDIO_FILE_PATH}set-basic-silence.mp3")
 
         total_time += word["original_duration"]
