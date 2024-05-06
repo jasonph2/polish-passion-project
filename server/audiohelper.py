@@ -20,7 +20,7 @@ def convert_webm_to_mp3(input_file, output_file):
         print(f"Error during conversion: {e}")
 
 def duration_command(file_path):
-    ffprobe_path = r'C:\Users\Jason\Polish-Passion-Project\ffmpeg-2023-12-14-git-5256b2fbe6-essentials_build\bin\ffprobe.exe'
+    ffprobe_path = r'C:\Users\Jason\polish-passion-project\ffmpeg\bin\ffprobe.exe'
     command = [
         ffprobe_path,
         '-v', 'error',
@@ -39,7 +39,7 @@ def duration_command(file_path):
         return None
     
 def combine_audio_files(output_path, input_files):
-    ffmpeg_path = r'C:\Users\Jason\Polish-Passion-Project\ffmpeg-2023-12-14-git-5256b2fbe6-essentials_build\bin\ffmpeg.exe'
+    ffmpeg_path = r'C:\Users\Jason\polish-passion-project\ffmpeg\bin\ffprobe.exe'
 
     audio_codec = 'mp3'
     sample_rate = '44100'
@@ -61,7 +61,7 @@ def combine_audio_files(output_path, input_files):
         print(f"Error during FFmpeg: {e}")
 
 def create_silent_audio(output_path, duration):
-    ffmpeg_path = r'C:\Users\Jason\Polish-Passion-Project\ffmpeg-2023-12-14-git-5256b2fbe6-essentials_build\bin\ffmpeg.exe'
+    ffmpeg_path = r'C:\Users\Jason\polish-passion-project\ffmpeg\bin\ffprobe.exe'
 
     silence_command = [
         ffmpeg_path,
