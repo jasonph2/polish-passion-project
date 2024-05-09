@@ -65,3 +65,21 @@ def generate_random_string(length):
         result += characters[random_index]
 
     return result
+
+def is_single_word(s):
+    return not any(c.isspace() for c in s)
+
+def find_frequency(word):
+    encodings = ['utf-8', 'latin-1', 'cp1250']  # Add more encodings as needed
+    for encoding in encodings:
+        try:
+            with open("Polish-Frequencies.csv", encoding=encoding) as f:
+                idx = 0
+                for line in f:
+                    idx += 1
+                    if word == line.strip():
+                        return idx
+            return -1
+        except UnicodeDecodeError:
+            continue
+    return -1

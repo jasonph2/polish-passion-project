@@ -4,7 +4,7 @@ import pymysql
 from config import AUDIO_FILE_PATH, USER_EMAIL
 import os
 from audiohelper import duration_command
-from utils import translate_text, text_to_speech
+from utils import translate_text, text_to_speech, is_single_word, find_frequency
 from podgenerator import generate_pod
 from datetime import date, datetime
 from aigenerator import with_turbo
@@ -160,10 +160,15 @@ def submit_word():
     translated_path = data["path"]
     translated_duration = duration_command(f"{AUDIO_FILE_PATH}{translated_path}")
 
+    frequency = -1
+    if is_single_word(translated_word):
+        frequency = find_frequency(translated_word)
+
+
     try:
         with conn.cursor() as cur:
-            sql = "INSERT INTO db.words (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, familiarity, date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-            cur.execute(sql, (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, data["familiarity"], date.today()))
+            sql = "INSERT INTO db.words (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, familiarity, date, frequency) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            cur.execute(sql, (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, data["familiarity"], date.today(), frequency))
         conn.commit()
         return jsonify({"message": "Data should be inserted successfully at this point"})
     except Exception as e:
