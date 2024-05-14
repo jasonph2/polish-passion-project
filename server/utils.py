@@ -77,8 +77,9 @@ def find_frequency(word):
                 idx = 0
                 for line in f:
                     idx += 1
-                    if word == line.strip():
+                    if word.lower() == line.strip():
                         return idx
+                #print(encoding)
             return -1
         except UnicodeDecodeError:
             continue

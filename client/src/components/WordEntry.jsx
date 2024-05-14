@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { getAudio, removeAudio, submitWord, submitManualWord } from '../api';
+import { getAudio, removeAudio, submitWord, submitManualWord, getFreqWords } from '../api';
 import { setToChange } from "../redux/reducer";
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -9,6 +9,7 @@ export function WordEntry() {
     const [tab, setTab] = useState(0);
     const [manOrigWord, setManOrigWord] = useState("");
     const [manTranWord, setManTranWord] = useState("");
+    const [freq, setFreq] = useState("");
     const change = useSelector((state) => state.some.toChange);
     const dispatch = useDispatch();
 
@@ -22,6 +23,10 @@ export function WordEntry() {
 
     const handleWordChange = (event) => {
         setWord(event.target.value);
+    }
+
+    const handleFreqChange = (event) => {
+        setFreq(event.target.value);
     }
 
     const handleGetAudio = () => {
@@ -64,6 +69,16 @@ export function WordEntry() {
         setManTranWord("");
     }
 
+    const handleGetFreqWords = () => {
+        const fetching = async () => {
+            const data = await getFreqWords({freq: freq});
+            console.log(data);
+            dispatch(setToChange(change + 1));
+        }
+        fetching();
+        setFreq("");
+    }
+
     const handleManualNo = () => {
         setManOrigWord("");
         setManTranWord("");
@@ -74,8 +89,10 @@ export function WordEntry() {
             <div>
                 <button onClick={() => setTab(0)}>Automatic Entry</button>
                 <button onClick={() => setTab(1)}>Manual Entry</button>
+                <button onClick={() => setTab(2)}>Frequency Entry</button>
             </div>
-            {tab === 0 ? (
+            <>
+            {tab === 0 && (
                 <div>
                     <input 
                         type='text'
@@ -99,7 +116,8 @@ export function WordEntry() {
                         <></>
                     )}
                 </div>
-            ) : (
+            )}
+            {tab === 1 && (
                 <div style={{padding: '10px' }}>
                     <input 
                         type='text'
@@ -128,6 +146,19 @@ export function WordEntry() {
                     )}
                 </div>
             ) }
+            {tab === 2 && (
+                <div>
+                    <input 
+                        type='text'
+                        id='textInput'
+                        value={freq}
+                        onChange={handleFreqChange}
+                        placeholder='Amount of new words'
+                    />
+                    <button onClick={handleGetFreqWords}>Preview Words</button>
+                </div>
+            )}
+            </>
         </div>
         
     )
