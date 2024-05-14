@@ -8,6 +8,8 @@ from utils import translate_text, text_to_speech, is_single_word, find_frequency
 from podgenerator import generate_pod
 from datetime import date, datetime
 from aigenerator import with_turbo
+import requests
+
 
 app = Flask(__name__)
 CORS(app)
@@ -272,22 +274,36 @@ def get_freq_words():
             else:
                 ex_idx += 1
     
-    for translated_word in new_words:
+    url = "https://dictionary.cambridge.org/us/dictionary/polish-english/w"
+    response = requests.get(url)
 
-        original_word = translate_text(translated_word[0], "en")
-        print(original_word)
-        original_path = text_to_speech(original_word, "en")
-        original_duration = duration_command(f"{AUDIO_FILE_PATH}{original_path}")
-        translated_path = text_to_speech(translated_word[0], "pl")
-        translated_duration = duration_command(f"{AUDIO_FILE_PATH}{translated_path}")
+    # Check if the request was successful
+    if response.status_code == 200:
+        # Parse the HTML content
+        soup = BeautifulSoup(response.content, 'html.parser')
 
-        try:
-            with conn.cursor() as cur:
-                sql = "INSERT INTO db.words (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, familiarity, date, frequency) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-                cur.execute(sql, (original_word, original_path, original_duration, translated_word[0], translated_path, translated_duration, 1, date.today(), translated_word[1]))
-            conn.commit()
-        except Exception as e:
-            return jsonify({"message": f"Error: {str(e)}"})
+        # Extract and print the text from the page
+        page_text = soup.get_text()
+
+        print(page_text)
+    else:
+        print(f"Failed to retrieve the page. Status code: {response.status_code}")
+    # for translated_word in new_words:
+
+    #     original_word = translate_text(translated_word[0], "en")
+    #     print(original_word)
+    #     original_path = text_to_speech(original_word, "en")
+    #     original_duration = duration_command(f"{AUDIO_FILE_PATH}{original_path}")
+    #     translated_path = text_to_speech(translated_word[0], "pl")
+    #     translated_duration = duration_command(f"{AUDIO_FILE_PATH}{translated_path}")
+
+    #     try:
+    #         with conn.cursor() as cur:
+    #             sql = "INSERT INTO db.words (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, familiarity, date, frequency) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    #             cur.execute(sql, (original_word, original_path, original_duration, translated_word[0], translated_path, translated_duration, 1, date.today(), translated_word[1]))
+    #         conn.commit()
+    #     except Exception as e:
+    #         return jsonify({"message": f"Error: {str(e)}"})
     return jsonify({"message": new_words})
 
 if __name__ == '__main__':
