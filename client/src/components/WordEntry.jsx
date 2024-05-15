@@ -155,7 +155,7 @@ export function WordEntry() {
                         onChange={handleFreqChange}
                         placeholder='Amount of new words'
                     />
-                    <button onClick={handleGetFreqWords}>Preview Words</button>
+                    <button onClick={handleGetFreqWords}>Add Words</button>
                 </div>
             )}
             </>

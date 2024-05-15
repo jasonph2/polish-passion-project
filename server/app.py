@@ -9,6 +9,9 @@ from podgenerator import generate_pod
 from datetime import date, datetime
 from aigenerator import with_turbo
 import requests
+from selenium import webdriver
+from webdriver_manager.chrome import ChromeDriverManager
+from bs4 import BeautifulSoup
 
 
 app = Flask(__name__)
@@ -238,10 +241,14 @@ def submit_manual_word():
     translated_path = text_to_speech(translated_word, "pl")
     translated_duration = duration_command(f"{AUDIO_FILE_PATH}{translated_path}")
 
+    frequency = -1
+    if is_single_word(translated_word):
+        frequency = find_frequency(translated_word)
+
     try:
         with conn.cursor() as cur:
-            sql = "INSERT INTO db.words (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, familiarity, date) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-            cur.execute(sql, (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, data["familiarity"], date.today()))
+            sql = "INSERT INTO db.words (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, familiarity, date, frequency) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+            cur.execute(sql, (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, data["familiarity"], date.today(), frequency))
         conn.commit()
         return jsonify({"message": "Data should be inserted successfully at this point"})
     except Exception as e:
@@ -270,40 +277,59 @@ def get_freq_words():
             line = f.readline()
             csv_idx += 1
             if csv_idx != existing_freqs[ex_idx]:
-                new_words.append((line.strip(), csv_idx))
+                new_words.append((line.strip(), csv_idx, ""))
             else:
                 ex_idx += 1
     
-    url = "https://dictionary.cambridge.org/us/dictionary/polish-english/w"
-    response = requests.get(url)
+    service = webdriver.ChromeService(ChromeDriverManager().install())
+    driver = webdriver.Chrome(service=service)
 
-    # Check if the request was successful
-    if response.status_code == 200:
-        # Parse the HTML content
-        soup = BeautifulSoup(response.content, 'html.parser')
+    base = "https://dictionary.cambridge.org/us/dictionary/polish-english/"
 
-        # Extract and print the text from the page
-        page_text = soup.get_text()
+    urls = [base + word[0] for word in new_words]
 
-        print(page_text)
-    else:
-        print(f"Failed to retrieve the page. Status code: {response.status_code}")
-    # for translated_word in new_words:
+    print(urls)
 
-    #     original_word = translate_text(translated_word[0], "en")
-    #     print(original_word)
-    #     original_path = text_to_speech(original_word, "en")
-    #     original_duration = duration_command(f"{AUDIO_FILE_PATH}{original_path}")
-    #     translated_path = text_to_speech(translated_word[0], "pl")
-    #     translated_duration = duration_command(f"{AUDIO_FILE_PATH}{translated_path}")
+    xpath = '/html/body/div[2]/div/div[1]/div[2]/article/div[2]/div[1]/span/div/div[4]/div/div[1]/div[2]/div/div[3]/span/a/span'
+    original_words = []
+    try:
+        idx = 0
+        for url in urls:
+            driver.get(url)
+            try:
+                element = driver.find_element("xpath", xpath)
+                print(f"Element Text from {url}:", element.text)
+                original_words.append(element.text)
+            except Exception as e:
+                original_words.append(translate_text(new_words[idx][0], "en"))
+                print(f"An error occurred on {url}: {e}")
+            idx += 1
+    except Exception as e:
+        print(f"An overall error occurred: {e}")
 
-    #     try:
-    #         with conn.cursor() as cur:
-    #             sql = "INSERT INTO db.words (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, familiarity, date, frequency) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
-    #             cur.execute(sql, (original_word, original_path, original_duration, translated_word[0], translated_path, translated_duration, 1, date.today(), translated_word[1]))
-    #         conn.commit()
-    #     except Exception as e:
-    #         return jsonify({"message": f"Error: {str(e)}"})
+    # Close the browser
+    driver.quit()
+    print(len(original_words))
+    print(original_words)
+    idx = 0
+    for translated_word in new_words:
+
+        original_word = original_words[idx]
+        print(original_word)
+        original_path = text_to_speech(original_word, "en")
+        original_duration = duration_command(f"{AUDIO_FILE_PATH}{original_path}")
+        translated_path = text_to_speech(translated_word[0], "pl")
+        translated_duration = duration_command(f"{AUDIO_FILE_PATH}{translated_path}")
+
+        try:
+            with conn.cursor() as cur:
+                sql = "INSERT INTO db.words (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, familiarity, date, frequency) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+                cur.execute(sql, (original_word, original_path, original_duration, translated_word[0], translated_path, translated_duration, 1, date.today(), translated_word[1]))
+            conn.commit()
+        except Exception as e:
+            return jsonify({"message": f"Error: {str(e)}"})
+
+        idx += 1
     return jsonify({"message": new_words})
 
 if __name__ == '__main__':

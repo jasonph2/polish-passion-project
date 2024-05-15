@@ -128,10 +128,15 @@ def random_path_gen(audio_files, data):
         basic_paths.append(f"{AUDIO_FILE_PATH}{word['original_path']}")
         basic_paths.append(f"{AUDIO_FILE_PATH}set-basic-silence.mp3")
 
-        total_time += word["original_duration"]
+        print("HERE 1")
+        total_time += Decimal(word["original_duration"])
+        print("HERE 2")
         total_time += Decimal(str(gap_funcs[data['speed']](word['translated_duration'])))
-        total_time += word["translated_duration"]
+        print("HERE 3")
+        total_time += Decimal(word["translated_duration"])
+        print("HERE 4")
         total_time += Decimal(data["gap"])
+        print("HERE 5")
 
         index_of_random_dict = audio_files.index(word)
         audio_files.pop(index_of_random_dict)
@@ -153,10 +158,12 @@ def random_path_gen(audio_files, data):
         basic_paths.append(f"{AUDIO_FILE_PATH}{word['translated_path']}")
         basic_paths.append(f"{AUDIO_FILE_PATH}set-basic-silence.mp3")
 
-        total_time += word["original_duration"]
+        print("HERE 6")
+        total_time += Decimal(word["original_duration"])
         total_time += Decimal(str(gap_funcs[data['speed']](word['translated_duration'])))
-        total_time += word["translated_duration"]
+        total_time += Decimal(word["translated_duration"])
         total_time += Decimal(data["gap"])
+        print("HERE 10")
 
         index_of_random_dict = audio_files.index(word)
         audio_files.pop(index_of_random_dict)
