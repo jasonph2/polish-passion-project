@@ -43,7 +43,7 @@ export function PodcastHistoryTable() {
     const getTotalListenedDuration = () => {
       if (podcasts && podcasts.length > 0) {
         console.log(podcasts);
-        const listenedPodcasts = podcasts.filter((pod) => pod.listened === 1);
+        const listenedPodcasts = podcasts.filter((pod) => pod.listened === "1");
         console.log(listenedPodcasts);
         const totalDurationInSeconds = listenedPodcasts.reduce((sum, pod) => sum + parseFloat(pod.duration), 0);
         setTotalDur(formatSeconds(totalDurationInSeconds));
