@@ -268,17 +268,20 @@ def get_freq_words():
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"})
 
-    existing_freqs = [row["frequency"] for row in existing_freqss]
+    existing_freqs = [row["frequency"] for row in existing_freqss if row["frequency"] != -1]
+    print(existing_freqs)
     new_words = []
     with open("Polish-Frequencies.csv", encoding='utf-8') as f:
         csv_idx = 0
-        ex_idx = 0
+        ex_idx = 1
         while len(new_words) < int(data["freq"]):
             line = f.readline()
             csv_idx += 1
-            if csv_idx != existing_freqs[ex_idx]:
+            if csv_idx not in existing_freqs:
+                print("HERE 1")
                 new_words.append((line.strip(), csv_idx, ""))
             else:
+                print("HERE 2")
                 ex_idx += 1
     
     service = webdriver.ChromeService(ChromeDriverManager().install())

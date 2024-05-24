@@ -1,4 +1,5 @@
 import subprocess
+import os
 
 def convert_webm_to_mp3(input_file, output_file):
     ffmeg_path = r'C:\Users\Jason\polish-passion-project\ffmpeg\bin\ffprobe.exe'
@@ -44,6 +45,10 @@ def combine_audio_files(output_path, input_files):
     audio_codec = 'mp3'
     sample_rate = '44100'
     bit_rate = '192k'
+
+    for file_path in input_files:
+        if not os.path.isfile(file_path):
+            print(file_path)
 
     command = [
         ffmpeg_path,
