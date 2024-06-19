@@ -30,12 +30,11 @@ def generate_pod(conn, data):
         else:
             basic_paths = bias_gen(audio_files, data, data["familiarity_level"])
 
-        print("prior to phases")
+        # print("prior to phases")
         if int(data["percent"]) > 0:
             generated_phrase_paths = phrase_audio_gen(with_turbo(conn), data)
         else:
             generated_phrase_paths = ([], [], 0, [])
-        print("post")
         final_audio = []
         if len(basic_paths[0]) > 0 and len(generated_phrase_paths[0]) > 0:
             for i in range(len(basic_paths[3])):
@@ -85,22 +84,30 @@ def generate_pod(conn, data):
                     combine_audio_files(temp_path, generated_phrase_paths[0][generated_phrase_paths[3][i]: generated_phrase_paths[3][i + 1]])
                     final_audio.append(temp_path)
 
-        print("HERE 234234")
+        # print("HERE 234234", final_audio)
         for i in range(len(final_audio)):
             send_email(data["email"], final_audio[i], i + 1, len(final_audio))
         
-        print(final_audio)
-        print(basic_paths[1])
+        # print(final_audio)
+        # print(basic_paths[1])
         
         os.remove(f"{AUDIO_FILE_PATH}set-basic-silence.mp3")     
         for path in final_audio:
-            os.remove(path)
+            if os.path.exists(path):
+                os.remove(path)
+            else:
+                print("SHOULD NOT HAVE MADE IT HERE 1")
         for path in basic_paths[1]:
-            os.remove(path)
+            if os.path.exists(path):
+                os.remove(path)
+            else:
+                print("SHOULD NOT HAVE MADE IT HERE 2")
         temp_set = set(generated_phrase_paths[0])
-        print("here again")
         for path in temp_set:
-            os.remove(path)
+            if os.path.exists(path):
+                os.remove(path)
+            else:
+                print("SHOULD NOT HAVE MADE IT HERE 3")
         if os.path.exists(f"{AUDIO_FILE_PATH}set-generated-silence.mp3"):
             os.remove(f"{AUDIO_FILE_PATH}set-generated-silence.mp3")
         return Decimal(basic_paths[2]) + Decimal(generated_phrase_paths[2])
@@ -127,7 +134,7 @@ def random_path_gen(audio_files, data):
 
         basic_paths.append(f"{AUDIO_FILE_PATH}{word['translated_path']}")
 
-        speedy_path = f"{AUDIO_FILE_PATH}{word['original_word']}-{data['speed']}-{generate_random_string(20)}.mp3"
+        speedy_path = f"{AUDIO_FILE_PATH}{word['original_word'].replace('?', '_')}-{data['speed']}-{generate_random_string(20)}.mp3"
 
         create_silent_audio(speedy_path, gap_funcs[data['speed']](word['translated_duration']))
         basic_paths.append(speedy_path)
@@ -154,7 +161,7 @@ def random_path_gen(audio_files, data):
 
         basic_paths.append(f"{AUDIO_FILE_PATH}{word['original_path']}")
 
-        speedy_path = f"{AUDIO_FILE_PATH}{word['original_word']}-{data['speed']}-{generate_random_string(20)}.mp3"
+        speedy_path = f"{AUDIO_FILE_PATH}{word['original_word'].replace('?', '_')}-{data['speed']}-{generate_random_string(20)}.mp3"
         create_silent_audio(speedy_path, gap_funcs[data['speed']](word['translated_duration']))
         basic_paths.append(speedy_path)
         silence_basic_paths.append(speedy_path)
@@ -207,7 +214,7 @@ def bias_gen(audio_files, data, bias):
 
         basic_paths.append(f"{AUDIO_FILE_PATH}{word['translated_path']}")
 
-        speedy_path = f"{AUDIO_FILE_PATH}{word['original_word']}-{data['speed']}-{generate_random_string(20)}.mp3"
+        speedy_path = f"{AUDIO_FILE_PATH}{word['original_word'].replace('?', '_')}-{data['speed']}-{generate_random_string(20)}.mp3"
         create_silent_audio(speedy_path, gap_funcs[data['speed']](word['translated_duration']))
         basic_paths.append(speedy_path)
         silence_basic_paths.append(speedy_path)
@@ -234,7 +241,7 @@ def bias_gen(audio_files, data, bias):
 
         basic_paths.append(f"{AUDIO_FILE_PATH}{word['original_path']}")
 
-        speedy_path = f"{AUDIO_FILE_PATH}{word['original_word']}-{data['speed']}-{generate_random_string(20)}.mp3"
+        speedy_path = f"{AUDIO_FILE_PATH}{word['original_word'].replace('?', '_')}-{data['speed']}-{generate_random_string(20)}.mp3"
         create_silent_audio(speedy_path, gap_funcs[data['speed']](word['translated_duration']))
         basic_paths.append(speedy_path)
         silence_basic_paths.append(speedy_path)
@@ -278,7 +285,6 @@ def phrase_audio_gen(phrases, data):
 
         generated_silent_path = f"{AUDIO_FILE_PATH}{generate_random_string(20)}.mp3"
         create_silent_audio(generated_silent_path, gap_funcs["very_slow"](translated_duration))
-        print(generated_silent_path)
         generated_phrase_paths.append(generated_silent_path)
         silence_paths.append(generated_silent_path)
 

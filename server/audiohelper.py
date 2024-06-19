@@ -14,11 +14,15 @@ def convert_webm_to_mp3(input_file, output_file):
         output_file
     ]
 
+    devnull = open(os.devnull, 'w')
+
     try:
-        subprocess.run(command, check=True)
+        subprocess.run(command, check=True, stdout=devnull, stderr=subprocess.STDOUT)
         print(f"Conversion successful: {input_file} -> {output_file}")
     except subprocess.CalledProcessError as e:
         print(f"Error during conversion: {e}")
+    finally:
+        devnull.close()
 
 def duration_command(file_path):
     ffprobe_path = r'C:\Users\Jason\polish-passion-project\ffmpeg\bin\ffprobe.exe'
@@ -30,14 +34,18 @@ def duration_command(file_path):
         file_path
     ]
 
+    devnull = open(os.devnull, 'w')
+
     try:
         result = subprocess.check_output(command, text=True)
         duration = float(result.strip())
-        print(f"Duration of {file_path}: {duration} seconds")
+        # print(f"Duration of {file_path}: {duration} seconds")
         return duration
     except subprocess.CalledProcessError as e:
         print(f"Error during ffprobe: {e}")
         return None
+    finally:
+        devnull.close()
     
 def combine_audio_files(output_path, input_files):
     ffmpeg_path = r'C:\Users\Jason\polish-passion-project\ffmpeg\bin\ffmpeg.exe'
@@ -46,8 +54,11 @@ def combine_audio_files(output_path, input_files):
     sample_rate = '44100'
     bit_rate = '192k'
 
+    devnull = open(os.devnull, 'w')
+
     for file_path in input_files:
         if not os.path.isfile(file_path):
+            print("WORD FOUND")
             print(file_path)
 
     command = [
@@ -60,10 +71,12 @@ def combine_audio_files(output_path, input_files):
     ]
 
     try:
-        subprocess.run(command, check=True)
+        subprocess.run(command, check=True, stdout=devnull, stderr=subprocess.STDOUT)
         print(f"Audio files combined successfully. Output saved to {output_path}")
     except subprocess.CalledProcessError as e:
         print(f"Error during FFmpeg: {e}")
+    finally:
+        devnull.close()
 
 def create_silent_audio(output_path, duration):
     ffmpeg_path = r'C:\Users\Jason\polish-passion-project\ffmpeg\bin\ffmpeg.exe'
@@ -78,10 +91,13 @@ def create_silent_audio(output_path, duration):
         output_path
     ]
 
+    devnull = open(os.devnull, 'w')
 
     try:
-        subprocess.run(silence_command, check=True)
-        print(f"Silent audio generated successfully.")
+        subprocess.run(silence_command, check=True, stdout=devnull, stderr=subprocess.STDOUT)
+        #print(f"Silent audio generated successfully.")
 
     except subprocess.CalledProcessError as e:
         print(f"Error during silence generation: {e}")
+    finally:
+        devnull.close()

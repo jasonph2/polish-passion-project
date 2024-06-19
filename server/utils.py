@@ -30,6 +30,7 @@ def send_email(recipient_email, mp3_file_path, audio_file_num, audio_file_total_
     with open(mp3_file_path, 'rb') as mp3_file:
         mp3_attachment = MIMEAudio(mp3_file.read(), 'mp3')
         mp3_attachment.add_header('Content-Disposition', f'attachment; filename="{mp3_file_path}"')
+        print("Inside email send", mp3_file_path)
         message.attach(mp3_attachment)
 
     with smtplib.SMTP('smtp.gmail.com', 587) as server:

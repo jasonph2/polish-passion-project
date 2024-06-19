@@ -18,7 +18,7 @@ def with_turbo(conn):
             individual_words = list(filter(lambda x: x.strip() != '', individual_words))
             random.shuffle(individual_words)
             individual_words = set(individual_words)
-            print(individual_words)
+            # print(individual_words)
 
             # # make an OpenAI request
             # client = OpenAI(api_key=OPEN_AI_KEY)

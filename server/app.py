@@ -139,7 +139,7 @@ def get_audio():
     data = request.get_json()
 
     translated_word = translate_text(data["word"])
-    path = text_to_speech(translated_word)
+    path = text_to_speech(translated_word).replace('?', '_')
 
     return jsonify({"path": path})
 
@@ -159,7 +159,7 @@ def submit_word():
     print(data)
 
     original_word = data["word"]
-    original_path = text_to_speech(original_word, "en")
+    original_path = text_to_speech(original_word, "en").replace('?', '_')
     original_duration = duration_command(f"{AUDIO_FILE_PATH}{original_path}")
     translated_word = translate_text(data["word"])
     translated_path = data["path"]
@@ -235,10 +235,10 @@ def submit_manual_word():
     print(data)
 
     original_word = data["original_word"]
-    original_path = text_to_speech(original_word, "en")
+    original_path = text_to_speech(original_word, "en").replace('?', '_')
     original_duration = duration_command(f"{AUDIO_FILE_PATH}{original_path}")
     translated_word = data["translated_word"]
-    translated_path = text_to_speech(translated_word, "pl")
+    translated_path = text_to_speech(translated_word, "pl").replace('?', '_')
     translated_duration = duration_command(f"{AUDIO_FILE_PATH}{translated_path}")
 
     frequency = -1
