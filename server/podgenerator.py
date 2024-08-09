@@ -227,7 +227,7 @@ def bias_gen(audio_files, data, bias):
         total_time += Decimal(word["translated_duration"])
         total_time += Decimal(data["gap"])
 
-        denom_list = [x for x in denom_list if x != word_idx]
+        # denom_list = [x for x in denom_list if x != word_idx]
 
     while total_time < Decimal(data["length"]) * 60 * Decimal((1 - int(data["percent"]) * .01)) and len(denom_list) > 0:
 
