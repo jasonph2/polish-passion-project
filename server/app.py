@@ -278,13 +278,16 @@ def get_freq_words():
             line = f.readline()
             csv_idx += 1
             if csv_idx not in existing_freqs:
-                print("HERE 1")
+                # print("HERE 1")
                 new_words.append((line.strip(), csv_idx, ""))
             else:
-                print("HERE 2")
+                # print("HERE 2")
                 ex_idx += 1
     
-    service = webdriver.ChromeService(ChromeDriverManager().install())
+    install = ChromeDriverManager().install()
+    folder = os.path.dirname(install)
+    chrome_path = os.path.join(folder, "chromedriver.exe")
+    service = webdriver.ChromeService(chrome_path)
     driver = webdriver.Chrome(service=service)
 
     base = "https://dictionary.cambridge.org/us/dictionary/polish-english/"
