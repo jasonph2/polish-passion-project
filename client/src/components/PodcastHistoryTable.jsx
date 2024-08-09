@@ -42,10 +42,12 @@ export function PodcastHistoryTable() {
 
     const getTotalListenedDuration = () => {
       if (podcasts && podcasts.length > 0) {
-        console.log(podcasts);
-        const listenedPodcasts = podcasts.filter((pod) => pod.listened === "1");
-        console.log(listenedPodcasts);
-        const totalDurationInSeconds = listenedPodcasts.reduce((sum, pod) => sum + parseFloat(pod.duration), 0);
+        // const listenedPodcasts = podcasts.filter((pod) => pod.listened === "1");
+        const totalDurationInSeconds = podcasts.reduce((sum, pod) => {
+          const mult = parseFloat(pod.listened);
+          const dur = parseFloat(pod.duration);
+          return sum + (mult * dur);
+        }, 0);
         setTotalDur(formatSeconds(totalDurationInSeconds));
       }
     };
@@ -80,8 +82,10 @@ export function PodcastHistoryTable() {
                     <>
                       <select id="dropdown" value={pod.listened} onChange={(event) => handleListenedChange(event, pod.id)}>
                           <option value="">-- Choose an option --</option>
-                          <option value="0">No</option>
-                          <option value="1">Yes</option>
+                          <option value="0">0</option>
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
                       </select>
                     </>
                     <td>
