@@ -27,6 +27,8 @@ def generate_pod(conn, data):
 
         if data["familiarity_level"] == "Random":
             basic_paths = random_path_gen(audio_files, data)
+        elif data["familiarity_level"] == "All":
+            basic_paths = gen_all(audio_files, data)
         else:
             basic_paths = bias_gen(audio_files, data, data["familiarity_level"])
 
@@ -305,3 +307,42 @@ def phrase_audio_gen(phrases, data):
 
     print(f"Final file length: {total_time}")
     return (generated_phrase_paths, silence_paths, total_time, idx_greater_12)
+
+def gen_all(audio_files, data):
+    with open('time_funcs.pkl', 'rb') as file:
+        gap_funcs = pickle.load(file)
+
+    basic_paths = []
+    silence_basic_paths = []
+    total_time = 0
+    idx_greater_12 = [0]
+    multiple = 12 * 60
+
+    while len(audio_files) > 0:
+
+        if total_time > multiple:
+            idx_greater_12.append(len(basic_paths))
+            multiple += 12 * 60
+
+        word = random.choice(audio_files)
+
+        basic_paths.append(f"{AUDIO_FILE_PATH}{word['original_path']}")
+
+        speedy_path = f"{AUDIO_FILE_PATH}{word['original_word'].replace('?', '_')}-{data['speed']}-{generate_random_string(20)}.mp3"
+        create_silent_audio(speedy_path, gap_funcs[data['speed']](word['translated_duration']))
+        basic_paths.append(speedy_path)
+        silence_basic_paths.append(speedy_path)
+
+        basic_paths.append(f"{AUDIO_FILE_PATH}{word['translated_path']}")
+        basic_paths.append(f"{AUDIO_FILE_PATH}set-basic-silence.mp3")
+
+        total_time += Decimal(word["original_duration"])
+        total_time += Decimal(str(gap_funcs[data['speed']](word['translated_duration'])))
+        total_time += Decimal(word["translated_duration"])
+        total_time += Decimal(data["gap"])
+
+        index_of_random_dict = audio_files.index(word)
+        audio_files.pop(index_of_random_dict)
+
+    print(f"Final file length: {total_time}")
+    return (basic_paths, silence_basic_paths, total_time, idx_greater_12)

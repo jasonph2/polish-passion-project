@@ -39,8 +39,17 @@ export function PodcastGenerator() {
         };
         fetching();
     }
+    
+    const handleGenerateAll = () => {
+        const fetching = async () => {
+            const data = await generatePodcast({ length: 1, familiarity_level: "All", speed: "fast", gap: 2, percent: 0, percent_orig: 0 });
+            console.log(data);
+        };
+        fetching();
+    }
 
     return (
+        <>
         <div className="podcast-generator-container">
             <div className="row">
                 <input
@@ -98,5 +107,9 @@ export function PodcastGenerator() {
                 <button onClick={handleGeneration} className='generate-button'>Generate Podcast</button>
             </div>
         </div>
+        <div>
+            <button onClick={handleGenerateAll} className='generatte-button'>Generate Podcast of All Saved Words</button>
+        </div>
+        </>
     );
 }
