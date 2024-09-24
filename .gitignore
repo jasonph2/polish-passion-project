@@ -3,3 +3,4 @@ audio/
 ffmpeg/
 server/config.py
 server/__pycache__/
+.vscode/
