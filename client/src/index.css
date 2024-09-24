@@ -53,6 +53,9 @@ button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
+table th, table td {
+  padding: 1px 20px;
+}
 
 @media (prefers-color-scheme: light) {
   :root {

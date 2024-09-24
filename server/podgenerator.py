@@ -8,7 +8,7 @@ from utils import send_email, generate_random_string, text_to_speech, translate_
 from aigenerator import with_turbo
 
 familiar_bias_probs = {1: 1, 2: 2, 3: 3, 4: 7, 5: 17}
-unfamiliar_bias_probs = {1: 17, 2: 7, 3: 3, 4: 2, 5: 1}
+unfamiliar_bias_probs = {1: 17, 2: 14, 3: 11, 4: 8, 5: 1}
 
 def generate_pod(conn, data):
     try:
