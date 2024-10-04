@@ -34,7 +34,7 @@ def generate_pod(conn, data):
 
         # print("prior to phases")
         if int(data["percent"]) > 0:
-            generated_phrase_paths = phrase_audio_gen(with_turbo(conn), data)
+            generated_phrase_paths = phrase_audio_gen(with_turbo(conn), data, conn)
         else:
             generated_phrase_paths = ([], [], 0, [])
         final_audio = []
@@ -261,7 +261,7 @@ def bias_gen(audio_files, data, bias):
     print(f"Final file length: {total_time}")
     return (basic_paths, silence_basic_paths, total_time, idx_greater_12)
 
-def phrase_audio_gen(phrases, data):
+def phrase_audio_gen(phrases, data, conn):
     with open('time_funcs.pkl', 'rb') as file:
         gap_funcs = pickle.load(file)
 
@@ -275,6 +275,10 @@ def phrase_audio_gen(phrases, data):
     multiple = 12 * 60
 
     while total_time < Decimal(data["length"]) * 60 * Decimal(int(data["percent"]) * .01) and phrases_idx < len(phrases):
+
+        if phrases_idx == len(phrases) - 1:
+            phrases = with_turbo(conn)
+            phrases_idx = 0
 
         if total_time > multiple:
             idx_greater_12.append(len(generated_phrase_paths))
