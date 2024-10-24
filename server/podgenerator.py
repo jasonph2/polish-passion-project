@@ -256,7 +256,7 @@ def bias_gen(audio_files, data, bias):
         total_time += Decimal(word["translated_duration"])
         total_time += Decimal(data["gap"])
 
-        denom_list = [x for x in denom_list if x != word_idx]
+        # denom_list = [x for x in denom_list if x != word_idx]
 
     print(f"Final file length: {total_time}")
     return (basic_paths, silence_basic_paths, total_time, idx_greater_12)
