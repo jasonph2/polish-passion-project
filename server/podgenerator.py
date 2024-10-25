@@ -262,6 +262,7 @@ def bias_gen(audio_files, data, bias):
     return (basic_paths, silence_basic_paths, total_time, idx_greater_12)
 
 def phrase_audio_gen(phrases, data, conn):
+    print("HERE HERE")
     with open('time_funcs.pkl', 'rb') as file:
         gap_funcs = pickle.load(file)
 
@@ -277,7 +278,9 @@ def phrase_audio_gen(phrases, data, conn):
     while total_time < Decimal(data["length"]) * 60 * Decimal(int(data["percent"]) * .01) and phrases_idx < len(phrases):
 
         if phrases_idx == len(phrases) - 1:
+            print("HEREE 2")
             phrases = with_turbo(conn)
+            print("HEREE 3")
             phrases_idx = 0
 
         if total_time > multiple:
@@ -294,7 +297,9 @@ def phrase_audio_gen(phrases, data, conn):
         generated_phrase_paths.append(generated_silent_path)
         silence_paths.append(generated_silent_path)
 
+        print("HEREE 3")
         original_word = translate_text(phrases[phrases_idx], target_language='en')
+        print("HEREE 4")
         original_path = text_to_speech(original_word, language="en")
         original_duration = duration_command(f"{AUDIO_FILE_PATH}{original_path}")
 
