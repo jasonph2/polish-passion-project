@@ -2,6 +2,7 @@
   margin: 0 auto;
   padding: 0rem;
   text-align: center;
+
 }
 
 .App {
@@ -13,8 +14,8 @@
   justify-content: space-around;
   background-color: #f0f0f0;
   padding: 10px;
-  width: 320px; /* Set the desired fixed width */
-  margin: 0 auto; /* Center the navbar horizontally */
+  width: 400px; 
+  margin: 0 auto; 
   margin-bottom: 20px;
 }
 

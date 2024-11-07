@@ -6,18 +6,26 @@
     align-items: center;
     padding: 20px;
     border: 2px solid #ccc; /* Add a border */
-    border-radius: 8px; /* Add rounded corners */
-    max-width: 900px; /* Limit the width */
-    margin: 0 auto; /* Center the container */
+    border-radius: 8px; /* Add rounded corners */ /* Limit the width */
   }
-.podcast-custom-item {
-    padding: 4px;
-    margin-top: 2px;
-    margin-bottom: 2px;
-    margin-left: 2px;
-    margin-right: 2px;
+
+.row {
+    display: flex;
+    width: 100%;
+    justify-content: space-between; /* Space columns evenly across the row */
+    margin-bottom: 15px;
 }
+
+.column {
+    flex: 1; /* This makes the columns take up equal width */
+    padding: 0 10px;
+}
+
+/* Add custom widths to columns if needed */
+.column.wider {
+    flex: 2; /* This column will take up twice the space compared to others */
+}
+
 .generate-button {
     margin: 6px;
 }
-  

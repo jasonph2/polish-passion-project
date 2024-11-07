@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { generatePodcast } from '../api';
+import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 
 import '../stylings/PodcastGenerator.css';
 
@@ -49,67 +50,100 @@ export function PodcastGenerator() {
     }
 
     return (
-        <>
-        <div className="podcast-generator-container">
-            <div className="row">
-                <input
-                    type='text'
-                    value={length}
-                    onChange={handleLengthChange}
-                    placeholder='Desired Podcast Length'
-                    className='podcast-custom-item'
-                />
-                <input
-                    type='text'
-                    value={gap}
-                    onChange={handleGapChange}
-                    placeholder='Time in between words'
-                    className='podcast-custom-item'
-                />
-                <label htmlFor="familiarity-dropdown" className='podcast-custom-item'>Familiarity:</label>
-                <select id="familiarity-dropdown" value={famLevel} onChange={handleFamChange} className='podcast-custom-item'>
-                    <option value="">-- Choose an option --</option>
-                    <option value="Unfamiliar">Unfamiliar</option>
-                    <option value="Random">Completely Random</option>
-                    <option value="Familiar">Familiar</option>
-                </select>
-            </div>
-            <div className='row'>
-                <label htmlFor="speed-dropdown" className='podcast-custom-item'>Speed:</label>
-                <select id="speed-dropdown" value={speed} onChange={handleSpeedChange} className='podcast-custom-item'>
-                    <option value="">-- Choose an option --</option>
-                    <option value="very_slow">Very Slow</option>
-                    <option value="slow">Slow</option>
-                    <option value="normal">Normal</option>
-                    <option value="fast">Fast</option>
-                    <option value="very_fast">Very Fast</option>
-                </select>
-                <label htmlFor="percent-input" className='podcast-custom-item'>Percent of Original Words First:</label>
-                <input
-                    type='text'
-                    value={percentOrig}
-                    onChange={handlePercentOrigChange}
-                    placeholder='Type as whole number'
-                    className='podcast-custom-item'
-                />
-                %
-            </div>
-            <div className="row">
-                <label htmlFor="percent-input" className='podcast-custom-item'>Percent of podcast using generated phrases:</label>
-                <input
-                    type='text'
-                    value={percent}
-                    onChange={handlePercentChange}
-                    placeholder='Type as whole number'
-                    className='podcast-custom-item'
-                />
-                %
-                <button onClick={handleGeneration} className='generate-button'>Generate Podcast</button>
-            </div>
-        </div>
-        <div>
-            <button onClick={handleGenerateAll} className='generatte-button'>Generate Podcast of All Saved Words</button>
-        </div>
-        </>
+        <Container className="podcast-generator-container">
+            {/* Row 1 */}
+            <Row className="mb-3">
+                <Col xs={12} md={4}>
+                    <Form.Group controlId="length-input">
+                        <Form.Label>Desired Podcast Length:</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={length}
+                            onChange={handleLengthChange}
+                            placeholder="Type as whole number"
+                        />
+                    </Form.Group>
+                </Col>
+                <Col xs={12} md={4}>
+                    <Form.Group controlId="gap-input">
+                        <Form.Label>Time in between words:</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={gap}
+                            onChange={handleGapChange}
+                            placeholder="Type as whole number"
+                        />
+                    </Form.Group>
+                </Col>
+                <Col xs={12} md={4}>
+                    <Form.Group controlId="familiarity-dropdown">
+                        <Form.Label>Familiarity:</Form.Label>
+                        <Form.Select value={famLevel} onChange={handleFamChange}>
+                            <option value="">-- Choose an option --</option>
+                            <option value="Unfamiliar">Unfamiliar</option>
+                            <option value="Random">Completely Random</option>
+                            <option value="Familiar">Familiar</option>
+                        </Form.Select>
+                    </Form.Group>
+                </Col>
+            </Row>
+
+            {/* Row 2 */}
+            <Row className="mb-3">
+                <Col xs={12} md={4}>
+                    <Form.Group controlId="speed-dropdown">
+                        <Form.Label>Speed:</Form.Label>
+                        <Form.Select value={speed} onChange={handleSpeedChange}>
+                            <option value="">-- Choose an option --</option>
+                            <option value="very_slow">Very Slow</option>
+                            <option value="slow">Slow</option>
+                            <option value="normal">Normal</option>
+                            <option value="fast">Fast</option>
+                            <option value="very_fast">Very Fast</option>
+                        </Form.Select>
+                    </Form.Group>
+                </Col>
+                <Col xs={12} md={4}>
+                    <Form.Group controlId="percent-orig-input">
+                        <Form.Label>Percent of Original Words First:</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={percentOrig}
+                            onChange={handlePercentOrigChange}
+                            placeholder="Type as whole number"
+                        />
+                    </Form.Group>
+                </Col>
+                <Col xs={12} md={4}>
+                    <Form.Group controlId="percent-input">
+                        <Form.Label>Percent with generated phrases:</Form.Label>
+                        <Form.Control
+                            type="text"
+                            value={percent}
+                            onChange={handlePercentChange}
+                            placeholder="Type as whole number"
+                        />
+                    </Form.Group>
+                </Col>
+            </Row>
+
+            {/* Row 3 */}
+            <Row className="mb-3">
+                <Col>
+                    <Button variant="primary" onClick={handleGeneration} className="generate-button">
+                        Generate Podcast
+                    </Button>
+                </Col>
+            </Row>
+
+            {/* Row 4 */}
+            <Row>
+                <Col>
+                    <Button variant="secondary" onClick={handleGenerateAll} className="generate-all-button">
+                        Generate Podcast of All Saved Words
+                    </Button>
+                </Col>
+            </Row>
+        </Container>
     );
 }

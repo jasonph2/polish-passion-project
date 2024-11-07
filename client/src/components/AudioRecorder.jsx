@@ -31,13 +31,7 @@ export function AudioElement() {
       const tempStr = adjusted + "-" + arg + "-" + generateRandomString(15) + ".webm"
       setEnglishFileName(tempStr);
       downloadLink.download = tempStr;
-    } else {
-      const adjusted = name.replace(/ /g, "_");
-      const tempStr = adjusted + "-" + generateRandomString(15) + ".webm"
-      setPolishFileName(tempStr);
-      downloadLink.download = tempStr;
-    }
-    
+    }   
 
     // Append the audio element and download link to the document
     document.body.appendChild(audio);
@@ -55,33 +49,9 @@ export function AudioElement() {
     setShowChoice(true);
   };
 
-  const handleUpdate = (name) => {
-    const fetching = async () => {
-      const data = await addEntry({name: name, polish_file_name: polishFileName, familiarity: 1, english_file_name: englishFileName, translated_word: translatedWord});
-      console.log(data);
-      dispatch(setToChange(change + 1));
-    }
-    fetching();
-    setShowChoice(false);
-    setName("");
-  }
-
-  const handleNo = () => {
-    setShowChoice(false);
-  }
-
-  const handleNameChange = (event) => {
-    setName(event.target.value);
-  }
-
-  const handleTranslatedWordChange = (event) => {
-    setTranslatedWord(event.target.value);
-  }
-
   return (
     <div>
       <div>
-        Polish Recorder
         <AudioRecorder
           onRecordingComplete={(blob) => addAudioElement(blob, "")}
           audioTrackConstraints={{
@@ -103,53 +73,6 @@ export function AudioElement() {
           showVisualizer={true}
         />
       </div>
-      <div>
-        English Recorder
-        <AudioRecorder
-          onRecordingComplete={(blob) => addAudioElement(blob, "English")}
-          audioTrackConstraints={{
-            noiseSuppression: true,
-            echoCancellation: true,
-            // autoGainControl,
-            // channelCount,
-            // deviceId,
-            // groupId,
-            // sampleRate,
-            // sampleSize,
-          }}
-          onNotAllowedOrFound={(err) => console.table(err)}
-          downloadOnSavePress={false}
-          downloadFileExtension="webm"
-          mediaRecorderOptions={{
-            audioBitsPerSecond: 128000,
-          }}
-          showVisualizer={true}
-        />
-      </div>
-      <br />
-      <input 
-        type='text'
-        id='textInput'
-        value={name}
-        onChange={handleNameChange}
-        placeholder='Word to Learn'
-      />
-      <input 
-        type='text'
-        id='textInput'
-        value={translatedWord}
-        onChange={handleTranslatedWordChange}
-        placeholder='Word to Learn'
-      />
-      {showChoice ? (
-        <div>
-          did you download both of the files?
-          <button onClick={() => handleUpdate(name)}>YES</button>
-          <button onClick={handleNo}>NO</button>
-        </div>
-      ) : (
-        <></>
-      )}
     </div>
   );
 }
