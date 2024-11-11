@@ -7,6 +7,7 @@
     padding: 20px;
     border: 2px solid #ccc; /* Add a border */
     border-radius: 8px; /* Add rounded corners */ /* Limit the width */
+    margin-bottom: 16px;
   }
 
 .row {
@@ -24,8 +25,4 @@
 /* Add custom widths to columns if needed */
 .column.wider {
     flex: 2; /* This column will take up twice the space compared to others */
-}
-
-.generate-button {
-    margin: 6px;
 }
