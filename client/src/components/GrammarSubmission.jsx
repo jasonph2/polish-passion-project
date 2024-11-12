@@ -22,14 +22,6 @@ export function GrammarSubmission() {
         setManTranWord(event.target.value);
     }
 
-    const handleWordChange = (event) => {
-        setWord(event.target.value);
-    }
-
-    const handleFreqChange = (event) => {
-        setFreq(event.target.value);
-    }
-
     const handleGetAudio = () => {
         const fetching = async () => {
             const data = await getAudio({word: word});
@@ -85,14 +77,6 @@ export function GrammarSubmission() {
             {tab === 0 && (
                 <div>
                     <AudioElement />
-                    <Form.Group controlId="textInput">
-                        <Form.Control 
-                            type='text'
-                            value={word}
-                            onChange={handleWordChange}
-                            placeholder='grammar lesson you are seeking to learn'
-                        />
-                    </Form.Group>
                 </div>
             )}
             {tab === 1 && (

@@ -318,3 +318,22 @@ export async function getFreqWords({freq}) {
         throw new Error(`Error in fetchData: ${error.message}`);
     }
 }
+
+export async function uploadGrammarAudio({description, blob}) {
+    try {
+        const formData = new FormData();
+        formData.append("description", description);
+        formData.append("blob", blob);
+        const response = await fetch(`${API_BASE_URL}/addrecordedaudio`, {
+            method: "POST",
+            mode:"cors",
+            body: formData,
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}
