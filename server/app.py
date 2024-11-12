@@ -1,10 +1,10 @@
 from flask import Flask, jsonify, send_from_directory, request, render_template
 from flask_cors import CORS
 import pymysql
-from config import AUDIO_FILE_PATH, USER_EMAIL
+from config import AUDIO_FILE_PATH, USER_EMAIL, GRAMMAR_FILE_PATH
 import os
-from audiohelper import duration_command
-from utils import translate_text, text_to_speech, is_single_word, find_frequency
+from audiohelper import duration_command, convert_webm_to_mp3
+from utils import translate_text, text_to_speech, is_single_word, find_frequency, change_file_extension, generate_random_string
 from podgenerator import generate_pod
 from datetime import date, datetime
 from aigenerator import with_turbo
@@ -59,30 +59,31 @@ def get_audio_list():
     except Exception as e:
         return jsonify([{"message": f"Error: {str(e)}"}])
 
-# @app.route('/addentry', methods=["POST"])
-# def add_entry():
+@app.route('/addrecordedaudio', methods=["POST"])
+def add_entry():
 
-#     data = request.get_json()
-#     print(data)
+    description = request.form.get('description')
+    fp = f"{generate_random_string(15)}.webm"
+    mp3_grammar_file = change_file_extension(fp, 'mp3')
 
-#     mp3_polish_file = change_file_extension(data["polish_path"], 'mp3')
-#     convert_webm_to_mp3(f"{AUDIO_FILE_PATH}{data['polish_path']}", f"{AUDIO_FILE_PATH}{mp3_polish_file}")
-#     polish_duration = duration_command(f"{AUDIO_FILE_PATH}{mp3_polish_file}")
-#     os.remove(f"{AUDIO_FILE_PATH}{data['polish_path']}")
+    fp = f"{GRAMMAR_FILE_PATH}{fp}"
+    blob = request.files.get('blob')
+    blob.save(fp)
+    
+    convert_webm_to_mp3(fp, f"{GRAMMAR_FILE_PATH}{mp3_grammar_file}")
+    duration = duration_command(f"{GRAMMAR_FILE_PATH}{mp3_grammar_file}")
+    os.remove(fp)
 
-#     mp3_english_file = change_file_extension(data["english_path"], 'mp3')
-#     convert_webm_to_mp3(f"{AUDIO_FILE_PATH}{data['english_path']}", f"{AUDIO_FILE_PATH}{mp3_english_file}")
-#     english_duration = duration_command(f"{AUDIO_FILE_PATH}{mp3_english_file}")
-#     os.remove(f"{AUDIO_FILE_PATH}{data['english_path']}")
+    print(duration)
 
-#     try:
-#         with conn.cursor() as cur:
-#             sql = "INSERT INTO db.words (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, familiarity) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-#             cur.execute(sql, (data["word"], mp3_english_file, english_duration, data["translated_word"], mp3_polish_file, polish_duration, data["familiarity"]))
-#         conn.commit()
-#         return jsonify({"message": "Data should be inserted successfully at this point"})
-#     except Exception as e:
-#         return jsonify({"message": f"Error: {str(e)}"})
+    try:
+        # with conn.cursor() as cur:
+        #     sql = "INSERT INTO db.words (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, familiarity) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        #     cur.execute(sql, (data["word"], mp3_english_file, english_duration, data["translated_word"], mp3_polish_file, polish_duration, data["familiarity"]))
+        # conn.commit()
+        return jsonify({"message": "Data should be inserted successfully at this point"})
+    except Exception as e:
+        return jsonify({"message": f"Error: {str(e)}"})
 
 @app.route('/removeentry', methods=["POST"])
 def remove_entry():

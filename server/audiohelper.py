@@ -2,7 +2,7 @@ import subprocess
 import os
 
 def convert_webm_to_mp3(input_file, output_file):
-    ffmeg_path = r'C:\Users\Jason\polish-passion-project\ffmpeg\bin\ffprobe.exe'
+    ffmeg_path = r'C:\Users\Jason\polish-passion-project\ffmpeg\bin\ffmpeg.exe'
     command = [
         ffmeg_path,
         '-i', input_file,

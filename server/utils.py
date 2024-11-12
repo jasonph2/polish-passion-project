@@ -9,6 +9,7 @@ import random
 from googletrans import Translator
 from gtts import gTTS
 
+# changes the file extension and returns a new string
 def change_file_extension(file_path, new_extension):
     directory, filename_with_extension = os.path.split(file_path)
     filename, _ = os.path.splitext(filename_with_extension)
