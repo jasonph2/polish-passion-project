@@ -13,6 +13,7 @@ export function AudioElement() {
   const [audioURL, setAudioURL] = useState(null); 
   const [showSaveButton, setShowSaveButton] = useState(false); 
   const [description, setDescription] = useState("");
+  const [name, setName] = useState("");
 
   const addAudioElement = (blob, arg) => {
     const url = URL.createObjectURL(blob);
@@ -40,6 +41,10 @@ export function AudioElement() {
     setBlob(null);
   };
 
+  const handleNameChange = (event) => {
+    setName(event.target.value);
+  }
+
   const handleDescriptionChange = (event) => {
     setDescription(event.target.value);
   }
@@ -47,14 +52,27 @@ export function AudioElement() {
   return (
     <div>
       <div>
-        <Form.Group controlId="textInput">
-            <Form.Control 
-                type='text'
-                value={description}
-                onChange={handleDescriptionChange}
-                placeholder='grammar lesson you are seeking to learn'
-            />
+      <Form>
+        <Form.Group controlId="nameInput">
+          <Form.Control
+            type="text"
+            value={name}
+            onChange={handleNameChange}
+            placeholder="Enter your name"
+          />
         </Form.Group>
+
+        {/* Description input field with more vertical space */}
+        <Form.Group controlId="descriptionInput">
+          <Form.Control
+            as="textarea" // Use textarea for multi-line input
+            rows={4}      // Adjust the number of rows as needed
+            value={description}
+            onChange={handleDescriptionChange}
+            placeholder="Grammar lesson you are seeking to learn"
+          />
+        </Form.Group>
+      </Form>
         <AudioRecorder
           onRecordingComplete={(blob) => addAudioElement(blob, "")}
           audioTrackConstraints={{
