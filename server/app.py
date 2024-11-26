@@ -127,8 +127,16 @@ def update_fam_level():
 
     try:
         with conn.cursor() as cursor:
-            update_query = f"UPDATE db.words SET familiarity = %s WHERE id = %s"
-            cursor.execute(update_query, (data["familiarity"], data["id"]))
+            update_query = """
+                UPDATE db.words
+                SET familiarity = %s,
+                    known = CASE
+                        WHEN %s = 5 THEN %s
+                        ELSE NULL
+                    END
+                WHERE id = %s
+            """
+            cursor.execute(update_query, (data["familiarity"], data["familiarity"], date.today(), data["id"]))
             conn.commit()
         return jsonify({"message": "Value is updated"})
     except Exception as e:
