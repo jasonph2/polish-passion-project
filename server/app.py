@@ -142,6 +142,21 @@ def update_fam_level():
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"})
 
+@app.route('/updateknown', methods=["POST"])
+def update_known():
+
+    data = request.get_json()
+    print(data)
+
+    try:
+        with conn.cursor() as cursor:
+            update_query = f"UPDATE db.words SET known = %s WHERE id = %s"
+            cursor.execute(update_query, (data["known"], data["id"]))
+            conn.commit()
+        return jsonify({"message": "Value is updated"})
+    except Exception as e:
+        return jsonify({"message": f"Error: {str(e)}"})
+
 @app.route('/getaudio', methods=["POST"])
 def get_audio():
 

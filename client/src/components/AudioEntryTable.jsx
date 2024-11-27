@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAudioFiles, setToChange } from '../redux/reducer';
-import { getAudioList, removeEntry, updateFamLevel } from '../api';
+import { getAudioList, removeEntry, updateFamLevel, updateKnown } from '../api';
 import { Table, Button, Form, Pagination } from 'react-bootstrap';
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { format, parseISO } from 'date-fns'
 
 const AudioTable = () => {
     const dispatch = useDispatch();
@@ -42,6 +45,16 @@ const AudioTable = () => {
     const handleFamChange = (event, id) => {
       const fetching = async () => {
         const data = await updateFamLevel({id: id, familiarity_level: event.target.value});
+        console.log(data);
+        dispatch(setToChange(change + 1));
+      }
+      fetching();
+    }
+
+    const handleKnownChange = (known, id) => {
+      const fetching = async () => {
+        const adjusted = known ? format(known, 'yyyy-MM-dd') : '';
+        const data = await updateKnown({id: id, known: adjusted});
         console.log(data);
         dispatch(setToChange(change + 1));
       }
@@ -95,10 +108,17 @@ const AudioTable = () => {
                 <th>Play</th>
                 <th>Familiarity</th>
                 <th>Delete</th>
+                <th>Learned Date</th>
               </tr>
             </thead>
             <tbody>
-              {currFiles.map((file) => (
+              {currFiles.map((file) => {
+                const selectedDate = file.known ? parseISO(file.known) : null;
+
+                const handleDateChangeWrapper = (date) => {
+                  handleKnownChange(date, file.id);
+                };
+              return (
                 <tr key={file.id}>
                   <td className="align-middle">{file.original_word}</td>
                   <td className="align-middle">{file.translated_word}</td>
@@ -127,8 +147,18 @@ const AudioTable = () => {
                       Delete
                     </Button>
                   </td>
+                  <td className="align-middle">
+                    <Form.Control
+                      as={DatePicker} 
+                      selected={selectedDate}
+                      onChange={handleDateChangeWrapper}
+                      dateFormat="yyyy-MM-dd"
+                      className="text-center"
+                      placeholderText="Select a date"
+                    />
+                  </td>
                 </tr>
-              ))}
+              );})}
             </tbody>
           </Table>
 
