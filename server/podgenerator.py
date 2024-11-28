@@ -297,9 +297,7 @@ def phrase_audio_gen(phrases, data, conn):
         generated_phrase_paths.append(generated_silent_path)
         silence_paths.append(generated_silent_path)
 
-        print("HEREE 3")
         original_word = translate_text(phrases[phrases_idx], target_language='en')
-        print("HEREE 4")
         original_path = text_to_speech(original_word, language="en")
         original_duration = duration_command(f"{AUDIO_FILE_PATH}{original_path}")
 

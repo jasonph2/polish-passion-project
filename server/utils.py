@@ -44,14 +44,11 @@ def send_email(recipient_email, mp3_file_path, audio_file_num, audio_file_total_
 
 def translate_text(text, target_language='pl'):
     translator = Translator()
-    print(text, type(text))
     translated_text = ""
     try:
         translated_text = translator.translate(text, dest=target_language)
     except Exception as e:
         print(e)
-    print(type(translated_text))
-    print(type(translated_text.text))
     return translated_text.text
 
 def text_to_speech(desired_text, language='pl'):
