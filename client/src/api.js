@@ -97,7 +97,8 @@ export async function generatePodcast({length, familiarity_level, speed, gap, pe
                 speed: speed,
                 gap: gap,
                 percent: percent,
-                percent_orig: percent_orig
+                percent_orig: percent_orig,
+                ltl: ltl
             })
         });
         if (!response.ok) {
@@ -341,15 +342,78 @@ export async function getFreqWords({freq}) {
     }
 }
 
-export async function uploadGrammarAudio({description, blob}) {
+export async function uploadGrammarAudio({name, description, blob}) {
     try {
         const formData = new FormData();
+        formData.append("name", name);
         formData.append("description", description);
         formData.append("blob", blob);
         const response = await fetch(`${API_BASE_URL}/addrecordedaudio`, {
             method: "POST",
             mode:"cors",
             body: formData,
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}
+
+export async function getLessonList() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/lessonlist`, {
+            method: "GET",
+            mode:"cors",
+            headers: {
+              "Content-Type": "application/json"
+            }
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}
+
+export async function removeLessonEntry({id, path}) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/removelessonentry`, {
+            method: "POST",
+            mode:"cors",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id: id,
+                path: path
+            })
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}
+
+export async function updateLessonFamLevel({id, familiarity_level}) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/updatelessonfamlevel`, {
+            method: "POST",
+            mode:"cors",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                id: id,
+                familiarity: familiarity_level,
+            })
         });
         if (!response.ok) {
             throw new Error("fetch failed");

@@ -1,6 +1,7 @@
 // PodcastGenerator.js
 
 import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { generatePodcast } from '../api';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 
@@ -13,6 +14,7 @@ export function PodcastGenerator() {
     const [gap, setGap] = useState("");
     const [percent, setPercent] = useState("");
     const [percentOrig, setPercentOrig] = useState("");
+    const ltl = useSelector((state) => state.some.ltl);
 
     const handleLengthChange = (event) => {
         setLength(event.target.value);
@@ -35,7 +37,7 @@ export function PodcastGenerator() {
 
     const handleGeneration = () => {
         const fetching = async () => {
-            const data = await generatePodcast({ length: length, familiarity_level: famLevel, speed: speed, gap: gap, percent: percent, percent_orig: percentOrig });
+            const data = await generatePodcast({ length: length, familiarity_level: famLevel, speed: speed, gap: gap, percent: percent, percent_orig: percentOrig, ltl: ltl });
             console.log(data);
         };
         fetching();

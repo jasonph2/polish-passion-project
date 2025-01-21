@@ -2,6 +2,7 @@
 const initialState = {
     toChange: 1,
     audioFiles: [],
+    ltl: []
   };
   
 const reducer = (state = initialState, action) => {
@@ -15,6 +16,11 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         audioFiles: action.payload,
+      };
+    case 'SET_LTL':
+      return {
+        ...state,
+        ltl: action.payload,
       };
     default:
       return state;
@@ -31,6 +37,13 @@ export const setToChange = (payload) => {
 export const setAudioFiles = (payload) => {
   return {
     type: 'SET_AUDIO_FILES',
+    payload,
+  };
+}
+
+export const setLtl = (payload) => {
+  return {
+    type: 'SET_LTL',
     payload,
   };
 }

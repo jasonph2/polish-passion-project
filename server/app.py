@@ -62,6 +62,7 @@ def get_audio_list():
 @app.route('/addrecordedaudio', methods=["POST"])
 def add_entry():
 
+    name = request.form.get('name')
     description = request.form.get('description')
     fp = f"{generate_random_string(15)}.webm"
     mp3_grammar_file = change_file_extension(fp, 'mp3')
@@ -77,10 +78,10 @@ def add_entry():
     print(duration)
 
     try:
-        # with conn.cursor() as cur:
-        #     sql = "INSERT INTO db.words (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, familiarity) VALUES (%s, %s, %s, %s, %s, %s, %s)"
-        #     cur.execute(sql, (data["word"], mp3_english_file, english_duration, data["translated_word"], mp3_polish_file, polish_duration, data["familiarity"]))
-        # conn.commit()
+        with conn.cursor() as cur:
+            sql = "INSERT INTO db.lessons (name, description, path, familiarity, date, duration) VALUES (%s, %s, %s, %s, %s, %s)"
+            cur.execute(sql, (name, description, mp3_grammar_file, 1, date.today(), duration))
+        conn.commit()
         return jsonify({"message": "Data should be inserted successfully at this point"})
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"})
@@ -361,6 +362,53 @@ def get_freq_words():
 
         idx += 1
     return jsonify({"message": new_words})
+
+@app.route('/lessonlist')
+def get_lesson_list():
+    try:
+        with conn.cursor() as cur:
+            sql = "SELECT * FROM db.lessons ORDER BY id DESC"
+            cur.execute(sql)
+            audio_files = cur.fetchall()
+        conn.commit()
+        return jsonify(audio_files)
+    except Exception as e:
+        return jsonify([{"message": f"Error: {str(e)}"}])
+    
+@app.route('/removelessonentry', methods=["POST"])
+def remove_lesson_entry():
+
+    data = request.get_json()
+    print(data)
+    
+    try:
+        with conn.cursor() as cur:
+            sql = "DELETE FROM db.lessons WHERE id = %s"
+            cur.execute(sql, (data["id"]))
+        conn.commit()
+        os.remove(f"{GRAMMAR_FILE_PATH}{data["path"]}")
+        return jsonify({"message": "Data should be deleted successfully at this point"})
+    except Exception as e:
+        return jsonify({"message": f"Error: {str(e)}"})
+    
+@app.route('/updatelessonfamlevel', methods=["POST"])
+def update_lesson_fam_level():
+
+    data = request.get_json()
+    print(data)
+
+    try:
+        with conn.cursor() as cursor:
+            update_query = """
+                UPDATE db.lessons
+                SET familiarity = %s
+                WHERE id = %s
+            """
+            cursor.execute(update_query, (data["familiarity"], data["id"]))
+            conn.commit()
+        return jsonify({"message": "Value is updated"})
+    except Exception as e:
+        return jsonify({"message": f"Error: {str(e)}"})
 
 if __name__ == '__main__':
     app.run()

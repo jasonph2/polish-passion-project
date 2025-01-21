@@ -7,6 +7,7 @@ import { PodcastGenerator } from './components/PodcastGenerator';
 import { WordEntry } from './components/WordEntry';
 import PodcastHistoryTable from './components/PodcastHistoryTable';
 import { GrammarSubmission } from './components/GrammarSubmission';
+import GTable from './components/GrammarTable';
 
 const WordAndAudioTab = () => (
   <>
@@ -25,7 +26,7 @@ const PodcastTab = () => (
 const GrammarTab = () => (
   <>
     <GrammarSubmission />
-    {/* <GrammerTable /> */}
+    <GTable />
   </>
 )
 

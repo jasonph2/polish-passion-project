@@ -25,7 +25,7 @@ export function AudioElement() {
   const handleSaveAudio = () => {
     
     const fetching = async () => {
-      const data = await uploadGrammarAudio({description: description, blob: blob});
+      const data = await uploadGrammarAudio({name: name, description: description, blob: blob});
       console.log(data);
       dispatch(setToChange(change + 1));
     }
@@ -58,7 +58,7 @@ export function AudioElement() {
             type="text"
             value={name}
             onChange={handleNameChange}
-            placeholder="Enter your name"
+            placeholder="Enter name of lesson"
           />
         </Form.Group>
 
