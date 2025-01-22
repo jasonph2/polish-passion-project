@@ -8,6 +8,7 @@ import { WordEntry } from './components/WordEntry';
 import PodcastHistoryTable from './components/PodcastHistoryTable';
 import { GrammarSubmission } from './components/GrammarSubmission';
 import GTable from './components/GrammarTable';
+import MonthlyListeningGraph from './components/MonthlyGraph';
 
 const WordAndAudioTab = () => (
   <>
@@ -27,6 +28,12 @@ const GrammarTab = () => (
   <>
     <GrammarSubmission />
     <GTable />
+  </>
+)
+
+const StatsTab = () => (
+  <>
+    <MonthlyListeningGraph />
   </>
 )
 
@@ -50,6 +57,9 @@ function App() {
                   <Nav.Link as={NavLink} to="/grammar-hub" activeClassName="active">
                       Grammar Hub
                   </Nav.Link>
+                  <Nav.Link as={NavLink} to="/stats" activeClassName="active">
+                      Stats
+                  </Nav.Link>
               </Nav>
           </Navbar.Collapse>
       </Navbar>
@@ -59,6 +69,7 @@ function App() {
           <Route path="/podcast-generator" element={<PodcastTab />} />
           <Route path="/word-and-audio" element={<WordAndAudioTab />} />
           <Route path="/grammar-hub" element={<GrammarTab />} />
+          <Route path="/stats" element={<StatsTab />} />
         </Routes>
       </div>
     </Router>

@@ -72,7 +72,7 @@ def combine_audio_files(output_path, input_files):
 
     try:
         subprocess.run(command, check=True, stdout=devnull, stderr=subprocess.STDOUT)
-        print(f"Audio files combined successfully. Output saved to {output_path}")
+        # print(f"Audio files combined successfully. Output saved to {output_path}")
     except subprocess.CalledProcessError as e:
         print(f"Error during FFmpeg: {e}")
     finally:
