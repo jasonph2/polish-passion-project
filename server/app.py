@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, send_from_directory, request, render_template
+from flask import Flask, jsonify, send_from_directory, request, render_template, send_file
 from flask_cors import CORS
 import pymysql
 from config import AUDIO_FILE_PATH, USER_EMAIL, GRAMMAR_FILE_PATH
@@ -12,6 +12,10 @@ import requests
 from selenium import webdriver
 from webdriver_manager.chrome import ChromeDriverManager
 from bs4 import BeautifulSoup
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from io import BytesIO
 
 
 app = Flask(__name__)
@@ -407,6 +411,61 @@ def update_lesson_fam_level():
             cursor.execute(update_query, (data["familiarity"], data["id"]))
             conn.commit()
         return jsonify({"message": "Value is updated"})
+    except Exception as e:
+        return jsonify({"message": f"Error: {str(e)}"})
+
+@app.route('/getmonthlygraph', methods=["GET"])
+def get_monthly_graph():
+
+    try:
+        with conn.cursor() as cursor:
+            query = "SELECT * FROM db.podcasts"
+            cursor.execute(query)
+            data = cursor.fetchall()
+        
+        all_dates = [datetime.strptime(entry['date'], '%Y-%m-%d %H:%M:%S.%f') for entry in data]
+        start_date = min(all_dates).replace(day=1)
+        end_date = max(all_dates).replace(day=1)
+
+        # Generate all months between start_date and end_date
+        current_date = start_date
+        listening_data = {}
+
+        while current_date <= end_date:
+            listening_data[current_date.strftime('%m-%Y')] = 0
+            next_month = current_date.month % 12 + 1
+            year = current_date.year + (current_date.month // 12)
+            current_date = current_date.replace(year=year, month=next_month)
+        
+        for entry in data:
+            mmyyyy = datetime.strptime(entry['date'], '%Y-%m-%d %H:%M:%S.%f')
+            key = mmyyyy.strftime('%m-%Y')
+            listening_data[key] += float(entry['duration']) * int(entry['listened'])
+        
+        for key in listening_data:
+            listening_data[key] /= 3600
+
+        print(listening_data)
+        
+        months = list(listening_data.keys())
+        totals = list(listening_data.values())
+
+        plt.figure(figsize=(10, 6))
+        plt.bar(months, totals, color='skyblue')
+        plt.axhline(y=10, color='red', linestyle='--', linewidth=1.5, label='10-Hour Threshold')
+        plt.title('Total Listening Time Per Month', fontsize=16)
+        plt.xlabel('Month-Year', fontsize=12)
+        plt.ylabel('Total Listening Time (hours)', fontsize=12)
+        plt.xticks(rotation=45)
+        plt.tight_layout()
+
+        img = BytesIO()
+        plt.savefig(img, format='png')
+        plt.close()
+        img.seek(0)
+
+        return send_file(img, mimetype='image/png')
+    
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"})
 
