@@ -425,7 +425,7 @@ def get_monthly_graph():
         
         all_dates = [datetime.strptime(entry['date'], '%Y-%m-%d %H:%M:%S.%f') for entry in data]
         start_date = min(all_dates).replace(day=1)
-        end_date = max(all_dates).replace(day=1)
+        end_date = max(all_dates).replace(day=2)
 
         # Generate all months between start_date and end_date
         current_date = start_date
@@ -451,13 +451,28 @@ def get_monthly_graph():
         totals = list(listening_data.values())
 
         plt.figure(figsize=(10, 6))
-        plt.bar(months, totals, color='skyblue')
+        bars = plt.bar(months, totals, color='skyblue')
+        for bar, total in zip(bars, totals):
+            hours = int(total)
+            minutes = int((total - hours) * 60)
+            label = f"{hours}h {minutes}m"
+            plt.text(
+                bar.get_x() + bar.get_width() / 2,  # Center of the bar
+                bar.get_height() + 0.1,  # Slightly above the bar
+                label,
+                ha='center',  # Center align text
+                va='bottom',
+                fontsize=10,
+                color='black'
+            )
         plt.axhline(y=10, color='red', linestyle='--', linewidth=1.5, label='10-Hour Threshold')
         plt.title('Total Listening Time Per Month', fontsize=16)
         plt.xlabel('Month-Year', fontsize=12)
         plt.ylabel('Total Listening Time (hours)', fontsize=12)
         plt.xticks(rotation=45)
+        plt.legend()
         plt.tight_layout()
+        plt.savefig("graph.png")
 
         img = BytesIO()
         plt.savefig(img, format='png')
