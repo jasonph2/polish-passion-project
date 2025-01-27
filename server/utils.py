@@ -1,6 +1,6 @@
 import os
 import smtplib
-from config import EMAIL_USERNAME, EMAIL_PASSWORD, AUDIO_FILE_PATH
+from config import EMAIL_USERNAME, EMAIL_PASSWORD, AUDIO_FILE_PATH, TUTOR_EMAIL
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.audio import MIMEAudio
@@ -88,3 +88,26 @@ def find_frequency(word):
         except UnicodeDecodeError:
             continue
     return -1
+
+def send_all_email(words):
+
+    word_list = [item['translated_word'] for item in words]
+
+    original_list = "\t".join(word_list)
+    
+    sorted_list = "\t".join(sorted(word_list))
+    
+    body = f"Original List:\n{original_list}\n\nAlphabetically Sorted List:\n{sorted_list}"
+
+    message = MIMEMultipart()
+    message['From'] = EMAIL_USERNAME
+    message['To'] = TUTOR_EMAIL
+    message['Subject'] = "List of all Polish words"
+
+    message.attach(MIMEText(body, 'plain'))
+
+    with smtplib.SMTP('smtp.gmail.com', 587) as server:
+        server.starttls()
+        server.login(EMAIL_USERNAME, EMAIL_PASSWORD)
+
+        server.sendmail(EMAIL_USERNAME, TUTOR_EMAIL, message.as_string())

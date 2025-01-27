@@ -423,3 +423,21 @@ export async function updateLessonFamLevel({id, familiarity_level}) {
         throw new Error(`Error in fetchData: ${error.message}`);
     }
 }
+
+export async function sendAll() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/sendall`, {
+            method: "POST",
+            mode:"cors",
+            headers: {
+              "Content-Type": "application/json"
+            }
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}

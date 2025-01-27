@@ -9,6 +9,7 @@ import PodcastHistoryTable from './components/PodcastHistoryTable';
 import { GrammarSubmission } from './components/GrammarSubmission';
 import GTable from './components/GrammarTable';
 import MonthlyListeningGraph from './components/MonthlyGraph';
+import { SendAll } from './components/SendAll';
 
 const WordAndAudioTab = () => (
   <>
@@ -27,6 +28,7 @@ const PodcastTab = () => (
 const GrammarTab = () => (
   <>
     <GrammarSubmission />
+    <SendAll />
     <GTable />
   </>
 )

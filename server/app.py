@@ -4,7 +4,7 @@ import pymysql
 from config import AUDIO_FILE_PATH, USER_EMAIL, GRAMMAR_FILE_PATH
 import os
 from audiohelper import duration_command, convert_webm_to_mp3
-from utils import translate_text, text_to_speech, is_single_word, find_frequency, change_file_extension, generate_random_string
+from utils import translate_text, text_to_speech, is_single_word, find_frequency, change_file_extension, generate_random_string, send_all_email
 from podgenerator import generate_pod
 from datetime import date, datetime
 from aigenerator import with_turbo
@@ -481,6 +481,20 @@ def get_monthly_graph():
 
         return send_file(img, mimetype='image/png')
     
+    except Exception as e:
+        return jsonify({"message": f"Error: {str(e)}"})
+
+@app.route('/sendall', methods=["POST"])
+def send_all():    
+    try:
+        with conn.cursor() as cur:
+            sql = "SELECT translated_word FROM db.words ORDER BY id DESC"
+            cur.execute(sql)
+            words = cur.fetchall()
+            send_all_email(words)
+
+        conn.commit()
+        return jsonify({"message": "Data should be deleted successfully at this point"})
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"})
 
