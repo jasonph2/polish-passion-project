@@ -31,7 +31,9 @@ def generate_pod(conn, data):
 
         if data["familiarity_level"] == "Random":
             # basic_paths = random_path_gen(audio_files, data)
+            # TODOLATER
             basic_paths = []
+            # TODOLATER
         elif data["familiarity_level"] == "All":
             # basic_paths = gen_all(audio_files, data)
             basic_paths = []
@@ -168,27 +170,22 @@ def bias_gen(audio_files, data, bias):
     with open('time_funcs.pkl', 'rb') as file:
         gap_funcs = pickle.load(file)
 
-    denom_list = []
-    for i in range(len(audio_files)):
-        idx = 0
-        if bias == "Familiar":
-            while idx < familiar_bias_probs[audio_files[i]["familiarity"]]:
-                denom_list.append(i)
-                idx += 1
-        elif bias == "Unfamiliar":
-            while idx < unfamiliar_bias_probs[audio_files[i]["familiarity"]]:
-                denom_list.append(i)
-                idx += 1
+    unfamiliar = [item for item in audio_files if item["familiarity"] < 5]
+    familiar = [item for item in audio_files if item["familiarity"] == 5]
+
+    if bias == "Unfamiliar":
+        weights = [88, 12]
+    else:
+        weights = [20, 80]
 
     basic_paths = []
     total_time = 0
     temp = []
 
-    while total_time < Decimal(data["length"]) * 60 * Decimal((1 - int(data["percent"]) * .01)) * Decimal((1 - int(data["percent_orig"]) * .01)) and len(denom_list) > 0:
-
-        random_int = random.randint(0, len(denom_list) - 1)
-        word_idx = denom_list[random_int]
-        word = audio_files[word_idx]
+    while total_time < Decimal(data["length"]) * 60 * Decimal((1 - int(data["percent"]) * .01)) * Decimal((1 - int(data["percent_orig"]) * .01)):
+        # TODOLATER fix for groups that contain no elements
+        group = random.choices([unfamiliar, familiar], weights=weights, k=1)[0]
+        word = random.choice(group)
 
         temp = []
 
@@ -218,11 +215,10 @@ def bias_gen(audio_files, data, bias):
 
         # denom_list = [x for x in denom_list if x != word_idx]
 
-    while total_time < Decimal(data["length"]) * 60 * Decimal((1 - int(data["percent"]) * .01)) and len(denom_list) > 0:
-
-        random_int = random.randint(0, len(denom_list) - 1)
-        word_idx = denom_list[random_int]
-        word = audio_files[word_idx]
+    while total_time < Decimal(data["length"]) * 60 * Decimal((1 - int(data["percent"]) * .01)):
+        
+        group = random.choices([unfamiliar, familiar], weights=weights, k=1)[0]
+        word = random.choice(group)
 
         temp = []
 
