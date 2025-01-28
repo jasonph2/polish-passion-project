@@ -4,7 +4,7 @@ import pymysql
 from config import AUDIO_FILE_PATH, USER_EMAIL, GRAMMAR_FILE_PATH
 import os
 from audiohelper import duration_command, convert_webm_to_mp3
-from utils import translate_text, text_to_speech, is_single_word, find_frequency, change_file_extension, generate_random_string, send_all_email
+from utils import translate_text, text_to_speech, is_single_word, find_frequency, change_file_extension, generate_random_string, send_all_email, get_listen_monthly, get_learned_data
 from podgenerator import generate_pod
 from datetime import date, datetime
 from aigenerator import with_turbo
@@ -16,6 +16,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from io import BytesIO
+from dbutils.pooled_db import PooledDB
 
 
 app = Flask(__name__)
@@ -26,15 +27,19 @@ app.config['MYSQL_USER'] = 'root'
 app.config['MYSQL_PASSWORD'] = 'password'
 app.config['MYSQL_DB'] = 'db'
 
-try:
-    conn = pymysql.connect(host=app.config['MYSQL_HOST'],
-        user=app.config['MYSQL_USER'],
-        password=app.config['MYSQL_PASSWORD'],
-        db=app.config['MYSQL_DB'],
-        cursorclass=pymysql.cursors.DictCursor)
-    print("connected successfully")
-except Exception as e:
-    print(f"Error connecting to MySQL: {str(e)}")
+pool = PooledDB(
+    pymysql,
+    mincached=5,  # Minimum number of connections to keep in the pool
+    maxcached=20, # Maximum number of connections in the pool
+    host=app.config['MYSQL_HOST'],
+    user=app.config['MYSQL_USER'],
+    password=app.config['MYSQL_PASSWORD'],
+    db=app.config['MYSQL_DB'],
+    cursorclass=pymysql.cursors.DictCursor
+)
+
+def get_db_connection():
+    return pool.connection()
 
 @app.after_request
 def add_cors_headers(response):
@@ -54,6 +59,7 @@ def serve_audio(filename):
 @app.route('/audiolist')
 def get_audio_list():
     try:
+        conn = get_db_connection()
         with conn.cursor() as cur:
             sql = "SELECT * FROM db.words ORDER BY id DESC"
             cur.execute(sql)
@@ -82,6 +88,7 @@ def add_entry():
     print(duration)
 
     try:
+        conn = get_db_connection()
         with conn.cursor() as cur:
             sql = "INSERT INTO db.lessons (name, description, path, familiarity, date, duration) VALUES (%s, %s, %s, %s, %s, %s)"
             cur.execute(sql, (name, description, mp3_grammar_file, 1, date.today(), duration))
@@ -97,6 +104,7 @@ def remove_entry():
     print(data)
     
     try:
+        conn = get_db_connection()
         with conn.cursor() as cur:
             sql = "DELETE FROM db.words WHERE translated_path = %s"
             cur.execute(sql, (data["translated_path"]))
@@ -116,6 +124,7 @@ def generate_podcast():
     
     try:
         pod_time = generate_pod(conn, data)
+        conn = get_db_connection()
         with conn.cursor() as cur:
             sql = "INSERT INTO db.podcasts (date, duration, generated_percentage, familiarity, listened) VALUES (%s, %s, %s, %s, %s)"
             cur.execute(sql, (datetime.now(), pod_time, data["percent"], data["familiarity_level"], 0))
@@ -131,6 +140,7 @@ def update_fam_level():
     print(data)
 
     try:
+        conn = get_db_connection()
         with conn.cursor() as cursor:
             update_query = """
                 UPDATE db.words
@@ -154,6 +164,7 @@ def update_known():
     print(data)
 
     try:
+        conn = get_db_connection()
         with conn.cursor() as cursor:
             update_query = f"UPDATE db.words SET known = %s WHERE id = %s"
             cursor.execute(update_query, (data["known"], data["id"]))
@@ -200,6 +211,7 @@ def submit_word():
 
 
     try:
+        conn = get_db_connection()
         with conn.cursor() as cur:
             sql = "INSERT INTO db.words (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, familiarity, date, frequency) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
             cur.execute(sql, (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, data["familiarity"], date.today(), frequency))
@@ -211,6 +223,7 @@ def submit_word():
 @app.route('/generatephrase', methods=["POST"])
 def generate_phrase():
 
+    conn = get_db_connection()
     phrase = with_turbo(conn)
 
     return jsonify({"message": phrase})
@@ -218,6 +231,7 @@ def generate_phrase():
 @app.route('/podcastlist')
 def get_podcast_list():
     try:
+        conn = get_db_connection()
         with conn.cursor() as cur:
             sql = "SELECT * FROM db.podcasts ORDER BY id DESC"
             cur.execute(sql)
@@ -234,6 +248,7 @@ def remove_podcast_entry():
     print(data)
     
     try:
+        conn = get_db_connection()
         with conn.cursor() as cur:
             sql = "DELETE FROM db.podcasts WHERE id = %s"
             cur.execute(sql, (data["id"]))
@@ -249,6 +264,7 @@ def update_listened_status():
     print(data)
 
     try:
+        conn = get_db_connection()
         with conn.cursor() as cursor:
             update_query = f"UPDATE db.podcasts SET listened = %s WHERE id = %s"
             cursor.execute(update_query, (data["listened"], data["id"]))
@@ -275,6 +291,7 @@ def submit_manual_word():
         frequency = find_frequency(translated_word)
 
     try:
+        conn = get_db_connection()
         with conn.cursor() as cur:
             sql = "INSERT INTO db.words (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, familiarity, date, frequency) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
             cur.execute(sql, (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, data["familiarity"], date.today(), frequency))
@@ -290,6 +307,7 @@ def get_freq_words():
     
     existing_freqss = []
     try:
+        conn = get_db_connection()
         with conn.cursor() as cur:
                 sql = "SELECT frequency FROM db.words ORDER BY frequency"
                 cur.execute(sql)
@@ -357,6 +375,7 @@ def get_freq_words():
         translated_duration = duration_command(f"{AUDIO_FILE_PATH}{translated_path}")
 
         try:
+            conn = get_db_connection()
             with conn.cursor() as cur:
                 sql = "INSERT INTO db.words (original_word, original_path, original_duration, translated_word, translated_path, translated_duration, familiarity, date, frequency) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
                 cur.execute(sql, (original_word, original_path, original_duration, translated_word[0], translated_path, translated_duration, 1, date.today(), translated_word[1]))
@@ -370,6 +389,7 @@ def get_freq_words():
 @app.route('/lessonlist')
 def get_lesson_list():
     try:
+        conn = get_db_connection()
         with conn.cursor() as cur:
             sql = "SELECT * FROM db.lessons ORDER BY id DESC"
             cur.execute(sql)
@@ -386,6 +406,7 @@ def remove_lesson_entry():
     print(data)
     
     try:
+        conn = get_db_connection()
         with conn.cursor() as cur:
             sql = "DELETE FROM db.lessons WHERE id = %s"
             cur.execute(sql, (data["id"]))
@@ -402,6 +423,7 @@ def update_lesson_fam_level():
     print(data)
 
     try:
+        conn = get_db_connection()
         with conn.cursor() as cursor:
             update_query = """
                 UPDATE db.lessons
@@ -418,67 +440,16 @@ def update_lesson_fam_level():
 def get_monthly_graph():
 
     try:
+        print("HERE")
+        conn = get_db_connection()
         with conn.cursor() as cursor:
             query = "SELECT * FROM db.podcasts"
             cursor.execute(query)
             data = cursor.fetchall()
+            print(data)
+
+        img = get_listen_monthly(data)
         
-        all_dates = [datetime.strptime(entry['date'], '%Y-%m-%d %H:%M:%S.%f') for entry in data]
-        start_date = min(all_dates).replace(day=1)
-        end_date = max(all_dates).replace(day=2)
-
-        # Generate all months between start_date and end_date
-        current_date = start_date
-        listening_data = {}
-
-        while current_date <= end_date:
-            listening_data[current_date.strftime('%m-%Y')] = 0
-            next_month = current_date.month % 12 + 1
-            year = current_date.year + (current_date.month // 12)
-            current_date = current_date.replace(year=year, month=next_month)
-        
-        for entry in data:
-            mmyyyy = datetime.strptime(entry['date'], '%Y-%m-%d %H:%M:%S.%f')
-            key = mmyyyy.strftime('%m-%Y')
-            listening_data[key] += float(entry['duration']) * int(entry['listened'])
-        
-        for key in listening_data:
-            listening_data[key] /= 3600
-
-        print(listening_data)
-        
-        months = list(listening_data.keys())
-        totals = list(listening_data.values())
-
-        plt.figure(figsize=(10, 6))
-        bars = plt.bar(months, totals, color='skyblue')
-        for bar, total in zip(bars, totals):
-            hours = int(total)
-            minutes = int((total - hours) * 60)
-            label = f"{hours}h {minutes}m"
-            plt.text(
-                bar.get_x() + bar.get_width() / 2,  # Center of the bar
-                bar.get_height() + 0.1,  # Slightly above the bar
-                label,
-                ha='center',  # Center align text
-                va='bottom',
-                fontsize=10,
-                color='black'
-            )
-        plt.axhline(y=10, color='red', linestyle='--', linewidth=1.5, label='10-Hour Threshold')
-        plt.title('Total Listening Time Per Month', fontsize=16)
-        plt.xlabel('Month-Year', fontsize=12)
-        plt.ylabel('Total Listening Time (hours)', fontsize=12)
-        plt.xticks(rotation=45)
-        plt.legend()
-        plt.tight_layout()
-        plt.savefig("graph.png")
-
-        img = BytesIO()
-        plt.savefig(img, format='png')
-        plt.close()
-        img.seek(0)
-
         return send_file(img, mimetype='image/png')
     
     except Exception as e:
@@ -487,6 +458,7 @@ def get_monthly_graph():
 @app.route('/sendall', methods=["POST"])
 def send_all():    
     try:
+        conn = get_db_connection()
         with conn.cursor() as cur:
             sql = "SELECT translated_word FROM db.words ORDER BY id DESC"
             cur.execute(sql)
@@ -498,5 +470,24 @@ def send_all():
     except Exception as e:
         return jsonify({"message": f"Error: {str(e)}"})
 
+@app.route('/getlearned', methods=["GET"])
+def get_learned():
+
+    try:
+        print("HERE 2")
+        conn = get_db_connection()
+        with conn.cursor() as cursor:
+            query = "SELECT known FROM db.words WHERE familiarity=5"
+            cursor.execute(query)
+            data = cursor.fetchall()
+            print(data)
+
+        img2 = get_learned_data(data)
+        
+        return send_file(img2, mimetype='image/png')
+    
+    except Exception as e:
+        return jsonify({"message": f"Error: {str(e)}"})
+    
 if __name__ == '__main__':
     app.run()
