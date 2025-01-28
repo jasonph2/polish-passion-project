@@ -441,3 +441,39 @@ export async function sendAll() {
         throw new Error(`Error in fetchData: ${error.message}`);
     }
 }
+
+export async function getMonthly() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/getmonthlygraph`, {
+            method: "GET",
+            mode:"cors",
+            headers: {
+              "Content-Type": "application/json"
+            }
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}
+
+export async function getLearned() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/getlearned`, {
+            method: "GET",
+            mode:"cors",
+            headers: {
+              "Content-Type": "application/json"
+            }
+        });
+        if (!response.ok) {
+            throw new Error("fetch failed");
+        }
+        return response.json();
+    } catch (error) {
+        throw new Error(`Error in fetchData: ${error.message}`);
+    }
+}

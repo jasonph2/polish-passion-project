@@ -11,6 +11,7 @@ import GTable from './components/GrammarTable';
 import MonthlyListeningGraph from './components/MonthlyGraph';
 import { SendAll } from './components/SendAll';
 
+
 const WordAndAudioTab = () => (
   <>
     <WordEntry />
@@ -36,6 +37,7 @@ const GrammarTab = () => (
 const StatsTab = () => (
   <>
     <MonthlyListeningGraph />
+    {/* <Graphs /> */}
   </>
 )
 

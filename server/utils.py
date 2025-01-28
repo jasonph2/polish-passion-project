@@ -8,6 +8,11 @@ from email import encoders
 import random
 from googletrans import Translator
 from gtts import gTTS
+import matplotlib.pyplot as plt
+from io import BytesIO
+from datetime import date, datetime
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
+from collections import defaultdict
 
 # changes the file extension and returns a new string
 def change_file_extension(file_path, new_extension):
@@ -111,3 +116,90 @@ def send_all_email(words):
         server.login(EMAIL_USERNAME, EMAIL_PASSWORD)
 
         server.sendmail(EMAIL_USERNAME, TUTOR_EMAIL, message.as_string())
+
+def get_listen_monthly(data):
+    all_dates = [datetime.strptime(entry['date'], '%Y-%m-%d %H:%M:%S.%f') for entry in data]
+    start_date = min(all_dates).replace(day=1)
+    end_date = max(all_dates).replace(day=2)
+
+    current_date = start_date
+    listening_data = {}
+
+    while current_date <= end_date:
+        listening_data[current_date.strftime('%m-%Y')] = 0
+        next_month = current_date.month % 12 + 1
+        year = current_date.year + (current_date.month // 12)
+        current_date = current_date.replace(year=year, month=next_month)
+    
+    for entry in data:
+        mmyyyy = datetime.strptime(entry['date'], '%Y-%m-%d %H:%M:%S.%f')
+        key = mmyyyy.strftime('%m-%Y')
+        listening_data[key] += float(entry['duration']) * int(entry['listened'])
+    
+    for key in listening_data:
+        listening_data[key] /= 3600
+
+    print(listening_data)
+    
+    months = list(listening_data.keys())
+    totals = list(listening_data.values())
+
+    fig, ax = plt.subplots(figsize=(10, 6))  
+    
+    bars = ax.bar(months, totals, color='skyblue')
+    for bar, total in zip(bars, totals):
+        hours = int(total)
+        minutes = int((total - hours) * 60)
+        label = f"{hours}h {minutes}m"
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,  
+            bar.get_height() + 0.1,  
+            label,
+            ha='center',  
+            va='bottom',
+            fontsize=10,
+            color='black'
+        )
+    ax.axhline(y=10, color='red', linestyle='--', linewidth=1.5, label='10-Hour Threshold')
+    ax.set_title('Total Listening Time Per Month', fontsize=16)
+    ax.set_xlabel('Month-Year', fontsize=12)
+    ax.set_ylabel('Total Listening Time (hours)', fontsize=12)
+    ax.set_xticklabels(months, rotation=45)
+    ax.legend()
+    fig.tight_layout()
+
+    img = BytesIO()
+    canvas = FigureCanvas(fig)
+    canvas.print_png(img)
+    plt.close(fig)
+    img.seek(0)
+    return img
+
+def get_learned_data(data):
+    dates = [item['known'] for item in data]
+    dates = [datetime.strptime(date, "%Y-%m-%d") for date in dates]
+
+    dates.sort()
+
+    cumulative_frequency = list(range(1, len(dates) + 1))
+
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(dates, cumulative_frequency, linestyle="-", color="blue", linewidth=2)
+
+    ax.set_title("Cumulative Frequency of Dates")
+    ax.set_xlabel("Date")
+    ax.set_ylabel("Cumulative Frequency")
+    ax.xaxis.set_major_formatter(plt.matplotlib.dates.DateFormatter("%m-%Y"))
+    fig.autofmt_xdate() 
+
+    ax.text(0.95, 0.05, f"Total Words Learned: {len(dates)}", transform=ax.transAxes,
+         ha="right", va="bottom", fontsize=12, color="black", bbox=dict(facecolor="white", alpha=0.7))
+
+    fig.tight_layout()
+
+    img = BytesIO()
+    canvas = FigureCanvas(fig)
+    canvas.print_png(img)
+    plt.close(fig) 
+    img.seek(0)
+    return img
