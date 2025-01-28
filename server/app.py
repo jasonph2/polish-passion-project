@@ -123,8 +123,9 @@ def generate_podcast():
     print(data)
     
     try:
-        pod_time = generate_pod(conn, data)
+        
         conn = get_db_connection()
+        pod_time = generate_pod(conn, data)
         with conn.cursor() as cur:
             sql = "INSERT INTO db.podcasts (date, duration, generated_percentage, familiarity, listened) VALUES (%s, %s, %s, %s, %s)"
             cur.execute(sql, (datetime.now(), pod_time, data["percent"], data["familiarity_level"], 0))
