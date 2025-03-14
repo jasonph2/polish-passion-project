@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAudioFiles, setToChange } from '../redux/reducer';
 import { getAudioList, removeEntry, updateFamLevel, updateKnown } from '../api';
-import { Table, Button, Form, Pagination } from 'react-bootstrap';
+import { Table, Button, Form, Pagination, InputGroup } from 'react-bootstrap';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { format, parseISO } from 'date-fns'
@@ -61,7 +61,17 @@ const AudioTable = () => {
       fetching();
     }
 
-    const currFiles = audioFiles.slice((currPage - 1) * rowsPerPage, currPage * rowsPerPage);
+    
+    const [searchQuery, setSearchQuery] = useState("");
+
+    const filteredWords = audioFiles.filter(
+      (word) =>
+        word.original_word.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        word.translated_word.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    const currFiles = filteredWords.slice((currPage - 1) * rowsPerPage, currPage * rowsPerPage);
+
     const handlePreviousPage = () => {
       if (currPage > 1) {
         setCurrPage(currPage - 1)
@@ -101,6 +111,25 @@ const AudioTable = () => {
       {audioFiles && audioFiles.length > 0 ? (
         <>
           <Table bordered hover responsive className="text-center">
+          <thead>
+              <tr>
+                <th colSpan="6" className="p-2">
+                  <div className="d-flex justify-content-end">
+                    <InputGroup style={{ maxWidth: "300px" }}>
+                      <Form.Control
+                        type="text"
+                        placeholder="Search words..."
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                      />
+                      {/* <Button variant="primary" disabled>
+                        🔍
+                      </Button> */}
+                    </InputGroup>
+                  </div>
+                </th>
+              </tr>
+            </thead>
             <thead>
               <tr>
                 <th>English Word</th>
