@@ -35,8 +35,7 @@ def generate_pod(conn, data):
             basic_paths = []
             # TODOLATER
         elif data["familiarity_level"] == "All":
-            # basic_paths = gen_all(audio_files, data)
-            basic_paths = []
+            basic_paths = gen_all(audio_files, data)
         else:
             basic_paths = bias_gen(audio_files, data, data["familiarity_level"])
 
@@ -309,7 +308,6 @@ def gen_all(audio_files, data):
         gap_funcs = pickle.load(file)
 
     basic_paths = []
-    silence_basic_paths = []
     total_time = 0
     idx_greater_12 = [0]
     multiple = 12 * 60
@@ -321,32 +319,45 @@ def gen_all(audio_files, data):
             multiple += 12 * 60
 
         word = random.choice(audio_files)
+        
+        temp = []
 
-        basic_paths.append(f"{AUDIO_FILE_PATH}{word['original_path']}")
+        temp.append(f"{AUDIO_FILE_PATH}{word['translated_path']}")
 
         speedy_path = f"{AUDIO_FILE_PATH}{word['original_word'].replace('?', '_')}-{data['speed']}-{generate_random_string(20)}.mp3"
-        create_silent_audio(speedy_path, gap_funcs[data['speed']](word['translated_duration']))
-        basic_paths.append(speedy_path)
-        silence_basic_paths.append(speedy_path)
+        silence_dur = gap_funcs[data['speed']](word['translated_duration'])
+        create_silent_audio(speedy_path, silence_dur)
+        temp.append(speedy_path)
 
-        basic_paths.append(f"{AUDIO_FILE_PATH}{word['translated_path']}")
-        basic_paths.append(f"{AUDIO_FILE_PATH}set-basic-silence.mp3")
+        temp.append(f"{AUDIO_FILE_PATH}{word['original_path']}")
+        temp.append(f"{AUDIO_FILE_PATH}set-basic-silence.mp3")
 
-        total_time += Decimal(word["original_duration"])
-        total_time += Decimal(str(gap_funcs[data['speed']](word['translated_duration'])))
-        total_time += Decimal(word["translated_duration"])
-        total_time += Decimal(data["gap"])
+        final_path = f"{AUDIO_FILE_PATH}{generate_random_string(25)}random.mp3"
+        combine_audio_files(final_path, temp)
+        
+        os.remove(speedy_path)
+
+        temp_total_time = 0
+        temp_total_time += Decimal(word["original_duration"])
+        temp_total_time += Decimal(str(silence_dur))
+        temp_total_time += Decimal(word["translated_duration"])
+        temp_total_time += Decimal(data["gap"])
+
+        basic_paths.append((final_path, temp_total_time))
+
+        total_time += temp_total_time
 
         index_of_random_dict = audio_files.index(word)
         audio_files.pop(index_of_random_dict)
+        print(len(audio_files))
 
     print(f"Final file length: {total_time}")
-    return (basic_paths, silence_basic_paths, total_time, idx_greater_12)
+    return basic_paths
 
 def generate_lessons(conn, data):
     print("generating lessons")
     lesson_paths = []
-    if len(data["ltl"]) > 0:
+    if "ltl" in data and len(data["ltl"]) > 0:
         with conn.cursor() as cur:
             sql = f"SELECT * FROM db.lessons WHERE id IN ({', '.join(['%s'] * len(data["ltl"]))})"   
             cur.execute(sql, data["ltl"])
